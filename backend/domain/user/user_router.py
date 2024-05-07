@@ -16,6 +16,7 @@ from domain.user.user_crud import (
     remove_user,
     get_all_users,
     validate_user,
+    get_current_user,
 )
 from domain.user.user_schema import (
     UserCreate,
@@ -25,42 +26,16 @@ from domain.user.user_schema import (
 )
 from models import User
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from jose import jwt, JWTError
+from jose import jwt
 from starlette.config import Config
 
 config = Config(".env")
-router = APIRouter(prefix="/wallyandcoda/user")
+router = APIRouter(prefix="/peppermint/user")
 
-ACCESS_TOKEN_EXPIRE_MINUTES = int(config("ACCESS_TOKEN_EXPIRE_MINUTES", default=10))
+ACCESS_TOKEN_EXPIRE_MINUTES = int(config("ACCESS_TOKEN_EXPIRE_MINUTES", default=1))
 SECRET_KEY = config("SECRET_KEY", default="SECRET_KEY")
 ALGORITHM = "HS512"
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/wallyandcoda/user/login")
-
-
-def get_current_user(
-    token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db),
-) -> User:
-    """
-    Authenticates the current user.
-    """
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials.",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise credentials_exception
-    except JWTError:
-        raise credentials_exception
-    else:
-        user = get_user_by_username(db, username=username)
-        if user is None:
-            raise credentials_exception
-        return user
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/peppermint/user/login")
 
 
 @router.post("/register")
@@ -117,77 +92,3 @@ def login_for_access_token(
         "token_type": "bearer",
         "username": user.username,
     }
-
-
-@router.get("/")
-def user_read(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-) -> UserResponse:
-    validate_user(db, current_user)
-    return get_user_by_id(db=db, id=current_user.id)
-
-
-@router.put("/")
-def user_update(
-    user_update: UserUpdate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-) -> UserResponse:
-    validate_user(db, current_user)
-    return update_user(db, user_update, current_user)
-
-
-@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
-def user_remove(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    validate_user(db, current_user)
-    remove_user(db, current_user)
-
-
-# Admin endpoints
-
-
-@router.get("/all")
-def get_all_user_admin(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    validate_user(db, current_user)
-    return get_all_users(db)
-
-
-@router.get("/{user_id}")
-def get_user_admin(
-    user_id: str,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    validate_user(db, current_user)
-    return get_user_by_id(db, user_id)
-
-
-@router.put("/{user_id}")
-def update_user_admin(
-    user_update: UserUpdate,
-    user_id: str,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    validate_user(db, current_user)
-    user = get_user_by_id(db, user_id)
-    return update_user(db, user_update, user)
-
-
-@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user_admin(
-    user_id: str,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    validate_user(db, current_user)
-    user = get_user_by_id(db, user_id)
-
-    return remove_user(db, user)
