@@ -108,3 +108,17 @@ def test_testuser_login(client, test_user):
     assert "username" in response.json()
 
     return response.json()["access_token"]
+
+
+def test_testuser_get_me(client, test_user):
+    """
+    User get test
+    """
+    access_token = test_testuser_login(client, test_user)
+    response = client.get(
+        "/peppermint/user", headers={"Authorization": f"Bearer {access_token}"}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["username"] == "testuser"
+    assert "password" not in response.json()
