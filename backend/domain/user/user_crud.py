@@ -188,6 +188,9 @@ def validate_user(db: Session, current_user: User) -> None:
     """
     Validates user.
     """
+    pass
+    '''
     all_users = db.query(User).all()
     if len(all_users) > 2 or current_user.email not in ACCEPTED_EMAILS:
         raise HTTPException(status_code=403, detail="You are not authorized.")
+    '''

@@ -43,6 +43,9 @@ def register(
     user_create: UserCreate,
     db: Session = Depends(get_db),
 ) -> UserResponse:
+    """
+    User registration.
+    """
     user = get_existing_user(db, user_create=user_create)
     if user:
         raise HTTPException(
@@ -69,6 +72,9 @@ def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ) -> Token:
+    """
+    Login endpoint.
+    """
     user = get_user_by_username(db, form_data.username)
     if not user or not pwd_context.verify(form_data.password, user.password):
         if user:
@@ -92,3 +98,29 @@ def login_for_access_token(
         "token_type": "bearer",
         "username": user.username,
     }
+
+
+@router.get("/")
+def get_user_me(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> UserResponse:
+    """
+    Returns the currently log in user (aka, me).
+    """
+    validate_user(db, current_user)
+    return get_user_by_id(db, current_user.id)
+
+
+@router.get("/{user_id}")
+def get_user_id(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> UserResponse | None:
+    """
+    Returns either the user by the given id or None.
+    """
+    validate_user(db, current_user)
+    user = get_user_by_id(db, user_id)
+    return user if user else None
