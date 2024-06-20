@@ -31,3 +31,30 @@ class User(Base):
     last_verified = Column(DateTime, nullable=True)
     last_login_attempt = Column(DateTime, nullable=True)
     login_attempts = Column(Integer, nullable=False)
+
+
+class Account(Base):
+    """
+    Account table in DB
+    """
+
+    __tablename__ = "account"
+    id = Column(String, primary_key=True)
+    account_type = Column(String, unique=False, nullable=False)
+    institution = Column(String, unique=False, nullable=False)
+    current_balance = Column(Float, unique=False, nullable=False)
+    user_id = Column(String, ForeignKey("site_user.id"))
+    user = relationship("User", backref="account")
+
+
+class Transaction(Base):
+    """
+    Transaction table in DB
+    """
+
+    __tablename__ = "transaction"
+    id = Column(String, primary_key=True)
+    transaction_date = Column(DateTime, nullable=False)
+    transaction_amount = Column(Float, unique=False, nullable=False)
+    account_id = Column(String, ForeignKey("account.id"))
+    account = relationship("Account", backref="transaction")
