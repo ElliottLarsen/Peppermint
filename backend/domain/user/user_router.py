@@ -124,3 +124,17 @@ def get_user_id(
     validate_user(db, current_user)
     user = get_user_by_id(db, user_id)
     return user if user else None
+
+
+@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user_id(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Deletes users by user id
+    """
+    validate_user(db, current_user)
+    user = get_user_by_id(db, user_id)
+    return remove_user(db, user)
