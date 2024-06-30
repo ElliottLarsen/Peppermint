@@ -108,3 +108,36 @@ def test_testuser_login(client, test_user):
     assert "username" in response.json()
 
     return response.json()["access_token"]
+
+def test_get_user_all(client):
+    """
+    Test return all users endpoint
+    """
+    data01 = {
+        "username": "testu1",
+        "password1": "testpassword",
+        "password2": "testpassword",
+        "first_name": "TEST",
+        "last_name": "USER",
+        "email": "test1@testuser.com",
+    }
+    data02 = {
+        "username": "testu2",
+        "password1": "testpassword2",
+        "password2": "testpassword2",
+        "first_name": "TEST",
+        "last_name": "USER2",
+        "email": "test2@testuser.com",
+    }
+
+    client.post("/peppermint/user/register", json=data01)
+    client.post("/peppermint/user/register", json=data02)
+    response = client.get("/peppermint/user/all/")
+
+    assert response.status_code == 200
+    assert len(response) == 2
+    
+
+    
+
+

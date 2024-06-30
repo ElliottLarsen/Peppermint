@@ -108,6 +108,7 @@ def get_user_me(
     """
     Returns the currently log in user (aka, me).
     """
+    print("HELLO!")
     validate_user(db, current_user)
     return get_user_by_id(db, current_user.id)
 
@@ -124,3 +125,17 @@ def get_user_id(
     validate_user(db, current_user)
     user = get_user_by_id(db, user_id)
     return user if user else None
+
+# here 
+@router.get("/all/")
+def get_user_all(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> list[UserResponse] | list:
+    """
+    Returns all users in the database
+    """
+    validate_user(db, current_user)
+    users = get_all_users(db)
+    
+    return users    
