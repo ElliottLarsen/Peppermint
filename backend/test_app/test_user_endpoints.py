@@ -1,6 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from main import app
+import json
 
 client_401 = TestClient(app)
 
@@ -122,3 +123,58 @@ def test_testuser_get(client, test_user):
     assert response.status_code == 200
     assert response.json()["username"] == "testuser"
     assert "password" not in response.json()
+
+
+def test_get_user_all(client):
+    """
+    Test return all users endpoint
+    """
+    data01 = {
+        "username": "testu1",
+        "password1": "testpassword",
+        "password2": "testpassword",
+        "first_name": "TEST",
+        "last_name": "USER",
+        "email": "test1@testuser.com",
+    }
+    data02 = {
+        "username": "testu2",
+        "password1": "testpassword2",
+        "password2": "testpassword2",
+        "first_name": "TEST",
+        "last_name": "USER2",
+        "email": "test2@testuser.com",
+    }
+
+    client.post("/peppermint/user/register", json=data01)
+    client.post("/peppermint/user/register", json=data02)
+
+    temp_user01 = {
+        "username": "testu1",
+        "password": "testpassword",
+    }
+    
+    # get token
+    login_response = client.post(
+        "/peppermint/user/login",
+        data=temp_user01,
+    )
+    access_token = login_response.json()["access_token"]
+    response = client.get(
+        "/peppermint/user",
+        headers={
+            "Authorization": f"Bearer {access_token}",
+        },
+    )
+    # authorized needs token headers
+    user_all_response = client.get(
+        "/peppermint/user/all/",
+        headers={
+            "Authorization": f"Bearer {access_token}",
+        },
+    )
+    assert response.status_code == 200
+    assert user_all_response.status_code == 200
+    # convert binary json into readable json
+    user_all_response_json = json.loads(user_all_response._content)
+    assert len(user_all_response_json) == 3
