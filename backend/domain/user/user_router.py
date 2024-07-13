@@ -108,7 +108,6 @@ def get_user_me(
     """
     Returns the currently log in user (aka, me).
     """
-    print("HELLO!")
     validate_user(db, current_user)
     return get_user_by_id(db, current_user.id)
 
@@ -140,7 +139,7 @@ def delete_user_id(
     user = get_user_by_id(db, user_id)
     return remove_user(db, user)
 
-# here 
+
 @router.get("/all/")
 def get_user_all(
     db: Session = Depends(get_db),
@@ -151,5 +150,5 @@ def get_user_all(
     """
     validate_user(db, current_user)
     users = get_all_users(db)
-    
-    return users    
+
+    return users
