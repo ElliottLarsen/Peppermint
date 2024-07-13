@@ -109,6 +109,20 @@ def test_testuser_login(client, test_user):
 
     return response.json()["access_token"]
 
+
+def test_testuser_get(client, test_user):
+    """
+    GET /user/ test
+    """
+    login_response = client.post("/peppermint/user/login", data=test_user)
+    access_token = login_response.json()["access_token"]
+    response = client.get(
+        "/peppermint/user", headers={"Authorization": f"Bearer {access_token}"}
+    )
+    assert response.status_code == 200
+    assert response.json()["username"] == "testuser"
+    assert "password" not in response.json()
+
 def test_get_user_all(client):
     """
     Test return all users endpoint
