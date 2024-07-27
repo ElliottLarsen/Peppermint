@@ -2,6 +2,8 @@ import pytest
 from fastapi.testclient import TestClient
 from main import app
 import json
+from domain.user.user_crud import get_user_by_username
+from database import SessionLocal
 
 client_401 = TestClient(app)
 
@@ -153,7 +155,7 @@ def test_get_user_all(client):
         "username": "testu1",
         "password": "testpassword",
     }
-    
+
     # get token
     login_response = client.post(
         "/peppermint/user/login",
@@ -178,3 +180,33 @@ def test_get_user_all(client):
     # convert binary json into readable json
     user_all_response_json = json.loads(user_all_response._content)
     assert len(user_all_response_json) == 3
+
+
+def test_delete_testusers(client, test_user):
+    """
+    Deletes users created during testing
+    """
+
+    access_token = test_testuser_login(client, test_user)
+    db = SessionLocal()
+    testu2 = get_user_by_username(db, "testu2")
+    testu1 = get_user_by_username(db, "testu1")
+    testuser = get_user_by_username(db, "testuser")
+
+    response = client.delete(
+        f"/peppermint/user/{testu2.id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    assert response.status_code == 204
+
+    response = client.delete(
+        f"/peppermint/user/{testu1.id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    assert response.status_code == 204
+
+    response = client.delete(
+        f"/peppermint/user/{testuser.id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    assert response.status_code == 204
