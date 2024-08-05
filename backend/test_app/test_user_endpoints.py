@@ -182,6 +182,37 @@ def test_get_user_all(client):
     assert len(user_all_response_json) == 3
 
 
+def test_user_update(client, test_user):
+    """
+    Test user update endpoint
+    """
+    access_token = test_testuser_login(client, test_user)
+    update_data = {
+        "username": "testuser",
+        "password1": "testpassword",
+        "password2": "testpassword",
+        "first_name": "UPDATE",
+        "last_name": "USER",
+        "email": "update@testuser.com",
+    }
+    response = client.put(
+        "/peppermint/user",
+        json=update_data,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert response.json()["first_name"] == "UPDATE"
+    assert response.json()["email"] == "update@testuser.com"
+
+    assert response.json()["first_name"] != "TEST"
+    assert response.json()["email"] != "testuser@testuser.com"
+
+
+#  -------------------------------------------------------------------
+#  DELETE
+#  -------------------------------------------------------------------
+
+
 def test_delete_testusers(client, test_user):
     """
     Deletes users created during testing
