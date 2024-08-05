@@ -152,3 +152,16 @@ def get_user_all(
     users = get_all_users(db)
 
     return users
+
+
+@router.put("/")
+def user_update(
+    user_update: UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> UserResponse:
+    """
+    Update user route
+    """
+    validate_user(db, current_user)
+    return update_user(db, user_update, current_user)
