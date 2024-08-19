@@ -207,6 +207,7 @@ def test_user_update(client, test_user):
     assert response.json()["first_name"] != "TEST"
     assert response.json()["email"] != "testuser@testuser.com"
 
+
 def test_user_update_by_user_id(client, test_user):
     """
     Test user update by user id endpoint
@@ -234,6 +235,7 @@ def test_user_update_by_user_id(client, test_user):
 
     assert response.json()["first_name"] != "TEST"
     assert response.json()["email"] != "testuser@testuser.com"
+
 
 #  -------------------------------------------------------------------
 #  DELETE
