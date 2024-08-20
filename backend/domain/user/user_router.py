@@ -161,7 +161,22 @@ def user_update(
     current_user: User = Depends(get_current_user),
 ) -> UserResponse:
     """
-    Update user route
+    Update user router
     """
     validate_user(db, current_user)
     return update_user(db, user_update, current_user)
+
+
+@router.put("/{user_id}")
+def user_update_by_user_id(
+    user_update: UserUpdate,
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> UserResponse:
+    """
+    Update user by User Id router
+    """
+    validate_user(db, current_user)
+    user = get_user_by_id(db, user_id)
+    return update_user(db, user_update, user)

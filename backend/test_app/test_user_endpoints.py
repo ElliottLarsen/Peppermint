@@ -2,7 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from main import app
 import json
-from domain.user.user_crud import get_user_by_username
+from domain.user.user_crud import get_user_by_username, get_user_by_id
 from database import SessionLocal
 
 client_401 = TestClient(app)
@@ -203,6 +203,35 @@ def test_user_update(client, test_user):
 
     assert response.json()["first_name"] == "UPDATE"
     assert response.json()["email"] == "update@testuser.com"
+
+    assert response.json()["first_name"] != "TEST"
+    assert response.json()["email"] != "testuser@testuser.com"
+
+
+def test_user_update_by_user_id(client, test_user):
+    """
+    Test user update by user id endpoint
+    """
+    access_token = test_testuser_login(client, test_user)
+    db = SessionLocal()
+    test01 = get_user_by_username(db, "testuser")
+
+    update_data = {
+        "username": "testuser",
+        "password1": "testpassword",
+        "password2": "testpassword",
+        "first_name": "UPDATENOW",
+        "last_name": "USER",
+        "email": "updatenow@testuser.com",
+    }
+    response = client.put(
+        f"/peppermint/user/{test01.id}",
+        json=update_data,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert response.json()["first_name"] == "UPDATENOW"
+    assert response.json()["email"] == "updatenow@testuser.com"
 
     assert response.json()["first_name"] != "TEST"
     assert response.json()["email"] != "testuser@testuser.com"
