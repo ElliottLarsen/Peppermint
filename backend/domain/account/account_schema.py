@@ -4,10 +4,9 @@ from datetime import datetime
 
 
 class AccountCreate(BaseModel):
-    institution: str  # account_name
+    institution: str
     account_type: str
     current_balance: float
-    #  does this need user ?
 
     @validator("institution", "account_type", "current_balance")
     def not_empty(cls, v):
@@ -17,7 +16,7 @@ class AccountCreate(BaseModel):
 
 
 class AccountUpdate(BaseModel):
-    institution: str 
+    institution: str
     account_type: str
     current_balance: float
 
@@ -30,8 +29,7 @@ class AccountUpdate(BaseModel):
 
 class AccountResponse(BaseModel):
     id: str
-    institution: str 
+    institution: str
     account_type: str
     current_balance: float
     user_id: str
-    user: str  # does this need user as well ?
