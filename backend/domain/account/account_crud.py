@@ -29,13 +29,13 @@ def create_account(
 
     db.add(db_account)
     db.commit()
-    return db.get_account_by_name(db, account_create.institution)
+    return get_account_by_id(db, db_account.id)
 
 
 def update_account(
     db: Session,
     account_update: AccountUpdate,
-    account=Account,
+    account: Account,
 ) -> Account:
     """
     Updates account
@@ -46,10 +46,13 @@ def update_account(
     account.current_balance = account_update.current_balance
     db.add(account)
     db.commit()
-    return db.get_account_by_id(db, account.id)
+    return get_account_by_id(db, account.id)
 
 
-def remove_account(db: Session, account: Account) -> None:
+def remove_account(
+    db: Session,
+    account: Account,
+) -> None:
     """
     Deletes account
     """
@@ -57,14 +60,10 @@ def remove_account(db: Session, account: Account) -> None:
     db.commit()
 
 
-def get_account_by_name(db: Session, account_name: str) -> Account | None:
-    """
-    Retrieves account by name
-    """
-    return db.query(Account).filter(Account.institution == account_name).first()
-
-
-def get_account_by_id(db: Session, id: str) -> Account | None:
+def get_account_by_id(
+    db: Session,
+    id: str,
+) -> Account | None:
     """
     Retrieves account by id
     """
@@ -74,8 +73,11 @@ def get_account_by_id(db: Session, id: str) -> Account | None:
 def get_user_accounts(
     db: Session,
     user: User,
-) -> list:
+) -> list | None:
     """
     Retrieves list of accounts for a user
     """
-    return db.query(Account).filter(Account.user_id == user.id).all()
+    accounts = db.query(Account).filter(Account.user_id == user.id).all()
+    if not accounts:
+        return
+    return accounts
