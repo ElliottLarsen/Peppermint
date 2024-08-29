@@ -36,7 +36,6 @@ def account_create(
     Create Account
     """
     validate_user(db, current_user)
-
     new_account = create_account(db, account_create=account_create, user=current_user)
 
     return AccountResponse(

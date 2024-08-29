@@ -69,7 +69,29 @@ def test_create_account(client, test_user):
         json=data,
         headers={"Authorization": f"Bearer {access_token}"},
     )
+
     assert response.status_code == 200
     assert response.json()["institution"] == "testbank"
     assert response.json()["account_type"] == "checking"
     assert response.json()["current_balance"] == 100.00
+
+
+#  -------------------------------------------------------------------
+#  DELETE
+#  -------------------------------------------------------------------
+
+
+def test_delete_setup_users(client, test_user):
+    """
+    Deletes users created during testing
+    """
+    access_token = test_setup_login_user(client, test_user)
+    db = SessionLocal()
+    testuser = get_user_by_username(db, "testuser")
+
+    response = client.delete(
+        f"/peppermint/user/{testuser.id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert response.status_code == 204
