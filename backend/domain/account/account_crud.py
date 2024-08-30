@@ -20,7 +20,7 @@ def create_account(
     """
     db_account = Account(
         id=str(uuid.uuid4()),
-        account_name=account_create.institution,
+        institution=account_create.institution,
         account_type=account_create.account_type,
         current_balance=account_create.current_balance,
         user_id=user.id,

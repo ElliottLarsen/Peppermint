@@ -8,7 +8,7 @@ class AccountCreate(BaseModel):
     account_type: str
     current_balance: float
 
-    @validator("institution", "account_type", "current_balance")
+    @validator("institution", "account_type")
     def not_empty(cls, v):
         if not v or not v.strip():
             raise ValueError("This is a required field")
@@ -20,7 +20,7 @@ class AccountUpdate(BaseModel):
     account_type: str
     current_balance: float
 
-    @validator("institution", "account_type", "current_balance")
+    @validator("institution", "account_type")
     def not_empty(cls, v):
         if not v or not v.strip():
             raise ValueError("This is a required field")
