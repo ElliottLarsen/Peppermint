@@ -67,3 +67,18 @@ def one_account_get(
 ):
     validate_user(db, current_user)
     return get_account_by_id(db, id)
+
+
+@router.put("/{id}")
+def account_update(
+    account_update: AccountUpdate,
+    id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Update account by id
+    """
+    validate_user(db, current_user)
+    account = get_account_by_id(db, id)
+    return update_account(db, account_update, account)
