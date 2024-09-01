@@ -113,6 +113,37 @@ def test_one_account_get(client, test_user):
     assert response.json()["current_balance"] == 100.0
 
 
+def test_update_account(client, test_user):
+    """
+    Account update endpoint test
+    """
+    access_token = test_setup_login_user(client, test_user)
+    account_response = client.get(
+        "/peppermint/account/my_accounts",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    account = account_response.json()[0]
+    account_id = account["id"]
+    account_update = {
+        "institution": "new_testbank",
+        "account_type": "savings",
+        "current_balance": 150.09,
+    }
+    response = client.put(
+        f"/peppermint/account/{account_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json=account_update,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["institution"] != "testbank"
+    assert response.json()["institution"] == "new_testbank"
+    assert response.json()["account_type"] != "checking"
+    assert response.json()["account_type"] == "savings"
+    assert response.json()["current_balance"] != 100.00
+    assert response.json()["current_balance"] == 150.09
+
+
 #  -------------------------------------------------------------------
 #  DELETE
 #  -------------------------------------------------------------------
