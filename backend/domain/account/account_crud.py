@@ -73,7 +73,7 @@ def get_account_by_id(
 def get_user_accounts(
     db: Session,
     user: User,
-) -> list | None:
+):
     """
     Retrieves list of accounts for a user
     """

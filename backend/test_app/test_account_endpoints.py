@@ -76,6 +76,20 @@ def test_create_account(client, test_user):
     assert response.json()["current_balance"] == 100.00
 
 
+def test_account_get(client, test_user):
+    """
+    Get all accounts endpoint test
+    """
+    access_token = test_setup_login_user(client, test_user)
+    response = client.get(
+        "/peppermint/account/my_accounts",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+
+
 #  -------------------------------------------------------------------
 #  DELETE
 #  -------------------------------------------------------------------

@@ -45,3 +45,15 @@ def account_create(
         current_balance=new_account.current_balance,
         user_id=new_account.user_id,
     )
+
+
+@router.get("/my_accounts")
+def account_get(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Gets all of user's accounts
+    """
+    validate_user(db, current_user)
+    return get_user_accounts(db, current_user)
