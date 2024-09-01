@@ -161,12 +161,18 @@ def test_account_remove(client, test_user):
     account = account_response.json()[0]
     account_id = account["id"]
 
+    assert len(account_response.json()) == 1
+
     response = client.delete(
         f"/peppermint/account/{account_id}",
         headers={"Authorization": f"Bearer {access_token}"},
     )
-
+    check_account_response = client.get(
+        "/peppermint/account/my_accounts",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
     assert response.status_code == 204
+    assert check_account_response.json() is None
 
 
 def test_delete_setup_users(client, test_user):
