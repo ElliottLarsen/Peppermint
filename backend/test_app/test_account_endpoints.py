@@ -90,6 +90,29 @@ def test_account_get(client, test_user):
     assert len(response.json()) == 1
 
 
+def test_one_account_get(client, test_user):
+    """
+    Get one account by id endpoint test
+    """
+    access_token = test_setup_login_user(client, test_user)
+    account_response = client.get(
+        "/peppermint/account/my_accounts",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    account = account_response.json()[0]
+    account_id = account["id"]
+
+    response = client.get(
+        f"/peppermint/account/{account_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["institution"] == "testbank"
+    assert response.json()["account_type"] == "checking"
+    assert response.json()["current_balance"] == 100.0
+
+
 #  -------------------------------------------------------------------
 #  DELETE
 #  -------------------------------------------------------------------
