@@ -82,3 +82,16 @@ def account_update(
     validate_user(db, current_user)
     account = get_account_by_id(db, id)
     return update_account(db, account_update, account)
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def account_remove(
+    id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Delete account by id
+    """
+    validate_user(db, current_user)
+    account = get_account_by_id(db, id)
+    return remove_account(db, account)
