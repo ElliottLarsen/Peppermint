@@ -10,7 +10,10 @@ from domain.account.account_crud import (
     get_account_by_id,
     get_user_accounts,
 )
-from domain.user.user_crud import validate_user
+from domain.user.user_crud import (
+    validate_user,
+    get_user_by_id,
+)
 from domain.account.account_schema import (
     AccountCreate,
     AccountUpdate,
@@ -83,11 +86,12 @@ def account_update(
     account = get_account_by_id(db, id)
     return update_account(db, account_update, account)
 
+
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def account_remove(
     id: str,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """
     Delete account by id

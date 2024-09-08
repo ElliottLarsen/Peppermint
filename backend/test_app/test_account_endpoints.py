@@ -112,6 +112,22 @@ def test_one_account_get(client, test_user):
     assert response.json()["account_type"] == "checking"
     assert response.json()["current_balance"] == 100.0
 
+def test_get_all_accounts_by_userid(client, test_user):
+    """
+    Get all accounts by user id endpoint test
+    """
+    access_token = test_setup_login_user(client, test_user)
+    db = SessionLocal()
+    test01 = get_user_by_username(db, "testuser")
+
+    response = client.get(
+        f"/peppermint/user/{test01.id}/account/",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+
 
 def test_update_account(client, test_user):
     """
