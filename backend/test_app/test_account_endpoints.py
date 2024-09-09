@@ -113,6 +113,47 @@ def test_one_account_get(client, test_user):
     assert response.json()["current_balance"] == 100.0
 
 
+def test_get_all_accounts_by_userid(client, test_user):
+    """
+    Get all accounts by user id endpoint test
+    """
+    access_token = test_setup_login_user(client, test_user)
+    db = SessionLocal()
+    test01 = get_user_by_username(db, "testuser")
+    data02 = {
+        "institution": "testbank02",
+        "account_type": "checking",
+        "current_balance": 57.98,
+    }
+    data03 = {
+        "institution": "testbank03",
+        "account_type": "savings",
+        "current_balance": 86750.70,
+    }
+
+    response01 = client.post(
+        "/peppermint/account/",
+        json=data02,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    response02 = client.post(
+        "/peppermint/account/",
+        json=data03,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert response01.status_code == 200
+    assert response02.status_code == 200
+
+    get_response = client.get(
+        f"/peppermint/user/{test01.id}/account/",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert get_response.status_code == 200
+    assert len(get_response.json()) == 3
+
+
 def test_update_account(client, test_user):
     """
     Account update endpoint test
@@ -158,20 +199,24 @@ def test_account_remove(client, test_user):
         "/peppermint/account/my_accounts",
         headers={"Authorization": f"Bearer {access_token}"},
     )
-    account = account_response.json()[0]
-    account_id = account["id"]
 
-    assert len(account_response.json()) == 1
+    assert len(account_response.json()) == 3
 
-    response = client.delete(
-        f"/peppermint/account/{account_id}",
-        headers={"Authorization": f"Bearer {access_token}"},
-    )
+    for account in account_response.json():
+        account_id = account["id"]
+
+        response = client.delete(
+            f"/peppermint/account/{account_id}",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+        assert response.status_code == 204
+
     check_account_response = client.get(
         "/peppermint/account/my_accounts",
         headers={"Authorization": f"Bearer {access_token}"},
     )
-    assert response.status_code == 204
+
     assert check_account_response.json() is None
 
 

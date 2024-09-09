@@ -81,3 +81,16 @@ def get_user_accounts(
     if not accounts:
         return
     return accounts
+
+
+def get_all_accounts_by_user_id(
+    db: Session,
+    user_id: str,
+):
+    """
+    Retrieves user's accounts by user id
+    """
+    accounts = db.query(Account).filter(Account.user_id == user_id).all()
+    if not accounts:
+        return
+    return accounts

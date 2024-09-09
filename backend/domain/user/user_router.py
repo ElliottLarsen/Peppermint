@@ -24,6 +24,7 @@ from domain.user.user_schema import (
     Token,
     UserUpdate,
 )
+from domain.account.account_crud import get_user_accounts, get_all_accounts_by_user_id
 from models import User
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt
@@ -124,6 +125,19 @@ def get_user_id(
     validate_user(db, current_user)
     user = get_user_by_id(db, user_id)
     return user if user else None
+
+
+@router.get("/{user_id}/account/")
+def get_accounts(
+    user_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Get all accounts associated with user_id
+    """
+    validate_user(db, current_user)
+    return get_all_accounts_by_user_id(db, user_id)
 
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
