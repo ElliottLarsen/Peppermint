@@ -1,6 +1,6 @@
 from pydantic import BaseModel, validator
-from models import User, Account
-from datetime import datetime, date, time
+from models import Account
+from datetime import datetime
 
 
 class TransactionCreate(BaseModel):
@@ -17,7 +17,7 @@ class TransactionCreate(BaseModel):
 class TransactionUpdate(BaseModel):
     transaction_date: datetime
     transaction_amount: float
-    account_id: str  # need?
+    account_id: str
     account: Account
 
     @validator("account_id", "account")
