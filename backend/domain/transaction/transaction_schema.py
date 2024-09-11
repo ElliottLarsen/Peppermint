@@ -4,62 +4,30 @@ from datetime import datetime, date, time
 
 
 class TransactionCreate(BaseModel):
-    transaction_type: str
-    transaction_date: date
-    # transaction_time: time
-    vendor: str  # vendor for withdrawals and institution for deposits?
-    amount: float
-    transaction_note: str  # need?
+    transaction_date: datetime
+    transaction_amount: float
 
-    @validator(
-        "transaction_type",
-        "vendor",
-        "transaction_note",
-    )
-    def not_empty(cls, v):
-        if not v or not v.strip():
-            raise ValueError("This is a required field.")
-        return v
-
-    @validator("transaction_date")
+    @validator("transaction_date", "transaction_amount")
     def date_not_empty(cls, v):
-        if not v:
-            raise ValueError("This is a required field.")
-        return v
-
-    @validator("amount")
-    def amount_not_empty(cls, v):
         if not v:
             raise ValueError("This is a required field.")
         return v
 
 
 class TransactionUpdate(BaseModel):
-    transaction_type: str
-    transaction_date: date
-    # transaction_time: time
-    vendor: str  # vendor for withdrawals and institution for deposits?
-    amount: float
-    transaction_note: str  # need?
+    transaction_date: datetime
+    transaction_amount: float
+    account_id: str  # need?
+    account: Account
 
-    @validator(
-        "transaction_type",
-        "vendor",
-        "transaction_note",
-    )
+    @validator("account_id", "account")
     def not_empty(cls, v):
         if not v or not v.strip():
             raise ValueError("This is a required field.")
         return v
 
-    @validator("transaction_date")
+    @validator("transaction_date", "transaction_amount")
     def date_not_empty(cls, v):
-        if not v:
-            raise ValueError("This is a required field.")
-        return v
-
-    @validator("amount")
-    def amount_not_empty(cls, v):
         if not v:
             raise ValueError("This is a required field.")
         return v
@@ -67,10 +35,7 @@ class TransactionUpdate(BaseModel):
 
 class TransactionResponse(BaseModel):
     id: str
-    transaction_type: str
-    transaction_date: date
-    # transaction_time: time
-    vendor: str  # vendor for withdrawals and institution for deposits?
-    amount: float
-    transaction_note: str  # need?
-    account_id: str  # or should this be user_id?
+    transaction_date: datetime
+    transaction_amount: float
+    account_id: str
+    account: Account
