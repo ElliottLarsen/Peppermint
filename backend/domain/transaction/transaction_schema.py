@@ -8,7 +8,7 @@ class TransactionCreate(BaseModel):
     transaction_amount: float
 
     @validator("transaction_date", "transaction_amount")
-    def date_not_empty(cls, v):
+    def not_empty(cls, v):
         if not v:
             raise ValueError("This is a required field.")
         return v
@@ -17,17 +17,9 @@ class TransactionCreate(BaseModel):
 class TransactionUpdate(BaseModel):
     transaction_date: datetime
     transaction_amount: float
-    account_id: str
-    account: Account
-
-    @validator("account_id", "account")
-    def not_empty(cls, v):
-        if not v or not v.strip():
-            raise ValueError("This is a required field.")
-        return v
 
     @validator("transaction_date", "transaction_amount")
-    def date_not_empty(cls, v):
+    def not_empty(cls, v):
         if not v:
             raise ValueError("This is a required field.")
         return v
@@ -38,4 +30,3 @@ class TransactionResponse(BaseModel):
     transaction_date: datetime
     transaction_amount: float
     account_id: str
-    account: Account
