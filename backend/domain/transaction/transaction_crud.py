@@ -32,6 +32,31 @@ def create_transaction(
     return get_account_transactions(db, account_id)
 
 
+def update_transaction(
+    db: Session,
+    transaction_update: TransactionUpdate,
+    transaction: Transaction,
+    account_id: str,
+) -> Transaction:
+    """
+    update Transaction
+    """
+    account = get_account_by_id(db, account_id)
+    original_transaction = get_account_transaction_by_id(db, transaction.id)
+    old_amount = original_transaction.transaction_amount
+
+    # remove the old amount from the current balance by negating the sign
+    account_balance_update(db, account, (old_amount * -1))
+    transaction.transaction_date = transaction_update.transaction_date
+    transaction.transaction_amount = transaction_update.transaction_amount
+
+    account_balance_update(db, account, transaction_update.transaction_amount)
+
+    db.add(transaction)
+    db.commit()
+    return get_account_transactions(db, account_id)
+
+
 def get_account_transactions(
     db: Session,
     account_id: str,
@@ -46,3 +71,10 @@ def get_account_transactions(
     if not transactions:
         return
     return transactions
+
+
+def get_account_transaction_by_id(db: Session, id: str) -> Transaction | None:
+    """
+    returns transaction from given transaction id
+    """
+    return db.query(Transaction).filter(Transaction.id == id).first()
