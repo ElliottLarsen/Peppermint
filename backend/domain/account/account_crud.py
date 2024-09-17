@@ -5,9 +5,6 @@ from domain.account.account_schema import (
 )
 from models import User, Account
 import uuid
-from datetime import datetime, timedelta, timezone
-from starlette import status
-from fastapi import HTTPException
 
 
 def create_account(
@@ -57,6 +54,18 @@ def remove_account(
     Deletes account
     """
     db.delete(account)
+    db.commit()
+
+
+def account_balance_update(
+    db: Session,
+    account: Account,
+    transaction_amount: float,
+):
+    account = get_account_by_id(account.id)
+    account.current_balance += transaction_amount
+
+    db.add(account.current_balance)
     db.commit()
 
 
