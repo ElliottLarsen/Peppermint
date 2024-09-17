@@ -58,12 +58,12 @@ def remove_account(
 
 
 def account_balance_update(
-        db: Session,
-        account: Account,
-        current_balance: float,
+    db: Session,
+    account: Account,
+    transaction_amount: float,
 ):
     account = get_account_by_id(account.id)
-    account.current_balance += current_balance
+    account.current_balance += transaction_amount
 
     db.add(account.current_balance)
     db.commit()
