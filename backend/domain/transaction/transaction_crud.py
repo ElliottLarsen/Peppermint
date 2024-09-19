@@ -35,15 +35,15 @@ def create_transaction(
 def update_transaction(
     db: Session,
     transaction_update: TransactionUpdate,
-    transaction: Transaction,
+    transaction_id: str,
     account_id: str,
 ) -> Transaction:
     """
     update Transaction
     """
     account = get_account_by_id(db, account_id)
-    original_transaction = get_account_transaction_by_id(db, transaction.id)
-    old_amount = original_transaction.transaction_amount
+    transaction = get_account_transaction_by_id(db, transaction_id)
+    old_amount = transaction.transaction_amount
 
     # remove the old amount from the current balance by negating the sign
     account_balance_update(db, account, (old_amount * -1))
