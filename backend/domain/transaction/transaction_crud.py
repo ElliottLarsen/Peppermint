@@ -43,6 +43,9 @@ def update_transaction(
     """
     account = get_account_by_id(db, account_id)
     transaction = get_account_transaction_by_id(db, transaction_id)
+    # raise error?
+    if not transaction:
+        return
     old_amount = transaction.transaction_amount
 
     # remove the old amount from the current balance by negating the sign
@@ -55,6 +58,23 @@ def update_transaction(
     db.add(transaction)
     db.commit()
     return get_account_transactions(db, account_id)
+
+
+def remove_transaction(
+    db: Session,
+    transaction_id: str,
+    account_id: str,
+):
+    account = get_account_by_id(db, account_id)
+    transaction = get_account_transaction_by_id(db, transaction_id)
+    if not transaction:
+        return
+
+    old_amount = transaction.transaction_amount
+    account_balance_update(db, account, (old_amount * -1))
+
+    db.delete(transaction)
+    db.commit()
 
 
 def get_account_transactions(
