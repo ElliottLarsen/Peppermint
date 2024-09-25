@@ -44,13 +44,7 @@ def update_transaction(
     update Transaction
     """
     account = get_account_by_id(db, account_id)
-    transaction = get_account_transaction_by_id(db, transaction_id)
-
-    if not transaction:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The requested transaction was not found",
-        )
+    transaction = valid_transaction(db, transaction_id)
 
     old_amount = transaction.transaction_amount
 
@@ -72,12 +66,7 @@ def remove_transaction(
     account_id: str,
 ):
     account = get_account_by_id(db, account_id)
-    transaction = get_account_transaction_by_id(db, transaction_id)
-    if not transaction:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The requested transaction was not found",
-        )
+    transaction = valid_transaction(db, transaction_id)
 
     old_amount = transaction.transaction_amount
     account_balance_update(db, account, (old_amount * -1))
@@ -107,3 +96,19 @@ def get_account_transaction_by_id(db: Session, id: str) -> Transaction | None:
     returns transaction from given transaction id
     """
     return db.query(Transaction).filter(Transaction.id == id).first()
+
+
+def valid_transaction(db: Session, transaction_id: str):
+    """
+    Checks if a transaction is valid and returns it, otherwise
+    raises an HTTTP Exception (404)
+    """
+
+    transaction = get_account_transaction_by_id(db, transaction_id)
+
+    if not transaction:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"The requested transaction was not found",
+        )
+    return transaction
