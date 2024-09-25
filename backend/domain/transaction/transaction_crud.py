@@ -8,6 +8,8 @@ from domain.account.account_crud import (
     get_account_by_id,
 )
 from models import Transaction
+from starlette import status
+from fastapi import HTTPException
 import uuid
 
 
@@ -43,9 +45,13 @@ def update_transaction(
     """
     account = get_account_by_id(db, account_id)
     transaction = get_account_transaction_by_id(db, transaction_id)
-    # raise error?
+
     if not transaction:
-        return
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"The requested transaction was not found",
+        )
+
     old_amount = transaction.transaction_amount
 
     # remove the old amount from the current balance by negating the sign
@@ -68,7 +74,10 @@ def remove_transaction(
     account = get_account_by_id(db, account_id)
     transaction = get_account_transaction_by_id(db, transaction_id)
     if not transaction:
-        return
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"The requested transaction was not found",
+        )
 
     old_amount = transaction.transaction_amount
     account_balance_update(db, account, (old_amount * -1))
