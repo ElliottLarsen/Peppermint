@@ -44,7 +44,13 @@ def update_transaction(
     update Transaction
     """
     account = get_account_by_id(db, account_id)
-    transaction = valid_transaction(db, transaction_id)
+    transaction = get_account_transaction_by_id(db, transaction_id)
+
+    if not valid_transaction(account_id, transaction_id):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Transaction and account mismatch"
+        )
 
     old_amount = transaction.transaction_amount
 
@@ -65,8 +71,15 @@ def remove_transaction(
     transaction_id: str,
     account_id: str,
 ):
+    
+    if not valid_transaction(account_id, transaction_id):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Transaction and account mismatch"
+        )
+    
     account = get_account_by_id(db, account_id)
-    transaction = valid_transaction(db, transaction_id)
+    transaction = get_account_transaction_by_id(db, transaction_id)
 
     old_amount = transaction.transaction_amount
     account_balance_update(db, account, (old_amount * -1))
@@ -98,17 +111,24 @@ def get_account_transaction_by_id(db: Session, id: str) -> Transaction | None:
     return db.query(Transaction).filter(Transaction.id == id).first()
 
 
-def valid_transaction(db: Session, transaction_id: str):
+def valid_transaction(db: Session, account_id: str, transaction_id:str) -> bool:
     """
-    Checks if a transaction is valid and returns it, otherwise
-    raises an HTTTP Exception (404)
+    Checks if a transaction is valid and returns it
     """
 
-    transaction = get_account_transaction_by_id(db, transaction_id)
+    account_transactions = get_account_transactions(db, account_id)
+    # Debug this. account_transactions might be a list of transactions.
+    transaction_id_set = set()
 
-    if not transaction:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The requested transaction was not found",
-        )
-    return transaction
+    for transaction in account_transactions:
+        transaction_id_set.add(transaction.id)
+
+
+    if transaction_id not in transaction_id_set:
+        return False
+    return True
+
+
+
+
+
