@@ -49,7 +49,7 @@ def update_transaction(
     if not valid_transaction(account_id, transaction_id):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Transaction and account mismatch"
+            detail="Transaction and account mismatch",
         )
 
     old_amount = transaction.transaction_amount
@@ -71,13 +71,13 @@ def remove_transaction(
     transaction_id: str,
     account_id: str,
 ):
-    
+
     if not valid_transaction(account_id, transaction_id):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Transaction and account mismatch"
+            detail="Transaction and account mismatch",
         )
-    
+
     account = get_account_by_id(db, account_id)
     transaction = get_account_transaction_by_id(db, transaction_id)
 
@@ -111,7 +111,7 @@ def get_account_transaction_by_id(db: Session, id: str) -> Transaction | None:
     return db.query(Transaction).filter(Transaction.id == id).first()
 
 
-def valid_transaction(db: Session, account_id: str, transaction_id:str) -> bool:
+def valid_transaction(db: Session, account_id: str, transaction_id: str) -> bool:
     """
     Checks if a transaction is valid and returns it
     """
@@ -123,12 +123,6 @@ def valid_transaction(db: Session, account_id: str, transaction_id:str) -> bool:
     for transaction in account_transactions:
         transaction_id_set.add(transaction.id)
 
-
     if transaction_id not in transaction_id_set:
         return False
     return True
-
-
-
-
-
