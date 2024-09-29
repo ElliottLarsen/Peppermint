@@ -62,7 +62,7 @@ def account_balance_update(
     account: Account,
     transaction_amount: float,
 ):
-    account = get_account_by_id(account.id)
+    account = get_account_by_id(db, account.id)
     account.current_balance += transaction_amount
 
     db.add(account.current_balance)
