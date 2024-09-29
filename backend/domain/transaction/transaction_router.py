@@ -40,7 +40,7 @@ from models import (
 
 from domain.user.user_router import get_current_user
 
-router = APIRouter(prefix="/peppermint/")
+router = APIRouter(prefix="/peppermint")
 
 
 @router.post("/{account_id}")
