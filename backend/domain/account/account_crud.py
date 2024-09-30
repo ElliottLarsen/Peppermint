@@ -65,7 +65,9 @@ def account_balance_update(
     account = get_account_by_id(db, account.id)
     account.current_balance += transaction_amount
 
-    db.add(account.current_balance)
+    db.add(account)
+    account = get_account_by_id(db, account.id)
+
     db.commit()
 
 

@@ -45,10 +45,10 @@ router = APIRouter(prefix="/peppermint")
 
 @router.post("/{account_id}")
 def transaction_create(
-    transaction_create: TransactionCreate,
     account_id: str,
+    transaction_create:TransactionCreate,
     db: Session = Depends(get_db),
-) -> TransactionResponse:
+):
     """
     Create transaction
     """
