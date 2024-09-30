@@ -25,7 +25,7 @@ def create_transaction(
         transaction_date=transaction_create.transaction_date,
         transaction_amount=transaction_create.transaction_amount,
         account_id=account.id,
-        account=account
+        account=account,
     )
 
     account_balance_update(db, account, db_transaction.transaction_amount)

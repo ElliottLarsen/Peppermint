@@ -104,8 +104,6 @@ def test_transaction_create(client, test_user):
     )
 
     account = account_response01.json()[0]
-    print(account["id"])
-    account_id = account["id"]
 
     transaction_data = {
         "transaction_date": "2024-09-29T19:51:34.898000",
@@ -121,7 +119,6 @@ def test_transaction_create(client, test_user):
 
     account_check = account_response02.json()[0]
 
-    print(response.json())
     assert response.status_code == 200
     assert response.json()["transaction_date"] == "2024-09-29T19:51:34.898000"
     assert "transaction_amount" in response.json()
