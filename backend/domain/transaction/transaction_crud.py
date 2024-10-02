@@ -24,14 +24,15 @@ def create_transaction(
         id=str(uuid.uuid4()),
         transaction_date=transaction_create.transaction_date,
         transaction_amount=transaction_create.transaction_amount,
-        account_id=account,
+        account_id=account.id,
+        account=account,
     )
 
     account_balance_update(db, account, db_transaction.transaction_amount)
 
     db.add(db_transaction)
     db.commit()
-    return get_account_transactions(db, account_id)
+    return get_account_transaction_by_id(db, db_transaction.id)
 
 
 def update_transaction(

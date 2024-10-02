@@ -98,25 +98,31 @@ def test_transaction_create(client, test_user):
     Create transaction endpoint test
     """
     access_token = test_setup_login_user(client, test_user)
-    account_response = client.get(
+    account_response01 = client.get(
         "/peppermint/account/my_accounts",
         headers={"Authorization": f"Bearer {access_token}"},
     )
 
-    account = account_response.json()[0]
-    print(account)
-    account_id = account["id"]
-    print(account_id)
+    account = account_response01.json()[0]
+
     transaction_data = {
-        "transaction_date": "2024-09-29T19:51:34.898Z",
+        "transaction_date": "2024-09-29T19:51:34.898000",
         "transaction_amount": 100.0,
     }
 
-    response = client.post(f"/peppermint/{account_id}", json=transaction_data)
-    print(response)
+    response = client.post(f"/peppermint/{account['id']}", json=transaction_data)
+
+    account_response02 = client.get(
+        "/peppermint/account/my_accounts",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    account_check = account_response02.json()[0]
+
     assert response.status_code == 200
-    assert "transaction_date" in response.json()
+    assert response.json()["transaction_date"] == "2024-09-29T19:51:34.898000"
     assert "transaction_amount" in response.json()
+    assert account_check["current_balance"] == 100.0
 
 
 # ---------------------------------------------------------
