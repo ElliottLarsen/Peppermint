@@ -74,5 +74,5 @@ def one_transaction_get(
     Get one transaction router
     """
     # should this raise error if False?
-    valid_transaction(account_id, transaction_id)
+    valid_transaction(db, account_id, transaction_id)
     return get_account_transaction_by_id(db, transaction_id)

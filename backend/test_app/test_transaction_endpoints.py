@@ -124,11 +124,12 @@ def test_transaction_create(client, test_user):
     assert "transaction_amount" in response.json()
     assert account_check["current_balance"] == 100.0
 
-def test_one_transaction_get(client, test_user): 
+
+def test_one_transaction_get(client, test_user):
     """
     Get one transaction endpoint test
     """
-
+    db = SessionLocal()
     access_token = test_setup_login_user(client, test_user)
     account_response01 = client.get(
         "/peppermint/account/my_accounts",
@@ -136,7 +137,8 @@ def test_one_transaction_get(client, test_user):
     )
 
     account = account_response01.json()[0]
-    print(account)
+
+    before_transaction = get_account_transactions(db, account["id"])
 
     new_transaction_data = {
         "transaction_date": "2024-10-01T19:51:34.898000",
@@ -145,16 +147,26 @@ def test_one_transaction_get(client, test_user):
 
     response = client.post(f"/peppermint/{account['id']}", json=new_transaction_data)
 
+    transaction_id = response.json()["id"]
     account_response02 = client.get(
         "/peppermint/account/my_accounts",
         headers={"Authorization": f"Bearer {access_token}"},
     )
 
+    transaction_response = client.get(f"/peppermint/{account['id']}/{transaction_id}")
+
     account_check = account_response02.json()[0]
-    print(account_check)
+    after_transaction = get_account_transactions(db, account["id"])
 
-    assert response.status_code == 200
-
+    assert transaction_response.status_code == 200
+    assert len(before_transaction) == 1
+    assert account["current_balance"] == 100.0
+    assert (
+        transaction_response.json()["transaction_date"] == "2024-10-01T19:51:34.898000"
+    )
+    assert transaction_response.json()["transaction_amount"] == 25.0
+    assert len(after_transaction) == 2
+    assert account_check["current_balance"] == 125.0
 
 
 # ---------------------------------------------------------
