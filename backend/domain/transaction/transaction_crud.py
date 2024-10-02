@@ -105,16 +105,16 @@ def get_account_transactions(
     return transactions
 
 
-def get_account_transaction_by_id(db: Session, id: str) -> Transaction | None:
+def get_account_transaction_by_id(db: Session, transaction_id: str) -> Transaction | None:
     """
     returns transaction from given transaction id
     """
-    return db.query(Transaction).filter(Transaction.id == id).first()
+    return db.query(Transaction).filter(Transaction.id == transaction_id).first()
 
 
 def valid_transaction(db: Session, account_id: str, transaction_id: str) -> bool:
     """
-    Checks if a transaction is valid and returns it
+    Checks if a transaction is valid and returns bool
     """
 
     account_transactions = get_account_transactions(db, account_id)
