@@ -169,6 +169,47 @@ def test_one_transaction_get(client, test_user):
     assert account_check["current_balance"] == 125.0
 
 
+def test_update_transaction(client, test_user):
+    """
+    Transaction PUT test
+    """
+    db = SessionLocal()
+    access_token = test_setup_login_user(client, test_user)
+    account_response01 = client.get(
+        "/peppermint/account/my_accounts",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    account = account_response01.json()[0]
+    transactions = get_account_transactions(db, account["id"])
+
+    # transaction[0] = 100, [1] = 25
+    transaction_id = transactions[0].id
+
+    assert account["current_balance"] == 125.0
+    assert len(transactions) == 2
+
+    update_transaction_data = {
+        "transaction_date": "2024-10-03T12:51:34.898000",
+        "transaction_amount": 50.0,
+    }
+    # update transaction[0]
+    update_response = client.put(f"/peppermint/{account['id']}/{transaction_id}", json=update_transaction_data)
+    account_response02 = client.get(
+        "/peppermint/account/my_accounts",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    updated_account = account_response02.json()[0]
+    assert update_response.status_code == 200
+    assert len(transactions) == 2
+    assert updated_account["current_balance"] != 125.0
+    assert updated_account["current_balance"] == 75.0
+    assert update_response.json()[0]["transaction_date"] != "2024-10-01T19:51:34.898000"
+    assert update_response.json()[0]["transaction_amount"] == 50.0
+
+
+
 # ---------------------------------------------------------
 #   DELETE
 # ---------------------------------------------------------
