@@ -50,7 +50,7 @@ def transaction_create(
     db: Session = Depends(get_db),
 ):
     """
-    Create transaction
+    Create transaction router
     """
     # do I need to validate account?
     new_transaction = create_transaction(
@@ -63,3 +63,16 @@ def transaction_create(
         transaction_amount=new_transaction.transaction_amount,
         account_id=new_transaction.account_id,
     )
+
+@router.get("/{account_id}/{transaction_id}")
+def one_transaction_get(
+    transaction_id: str,
+    account_id: str,
+    db: Session = Depends(get_db),
+):
+    """
+    Get one transaction router
+    """
+    # should this raise error if False?
+    valid_transaction(db, account_id, transaction_id)
+    return get_account_transaction_by_id(db, transaction_id)
