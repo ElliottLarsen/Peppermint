@@ -76,3 +76,17 @@ def one_transaction_get(
     # should this raise error if False?
     valid_transaction(db, account_id, transaction_id)
     return get_account_transaction_by_id(db, transaction_id)
+
+
+@router.put("/{account_id}/{transaction_id}")
+def transaction_update(
+    transaction_update: TransactionUpdate,
+    transaction_id: str,
+    account_id: str,
+    db: Session = Depends(get_db),
+):
+    """
+    update transaction router
+    """
+    valid_transaction(db, account_id, transaction_id)
+    return update_transaction(db, transaction_update, transaction_id, account_id)
