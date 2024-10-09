@@ -1,6 +1,4 @@
 from pydantic import BaseModel, validator
-from models import User
-from datetime import datetime
 
 
 class AccountCreate(BaseModel):

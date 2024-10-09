@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from starlette import status
@@ -7,38 +7,14 @@ from domain.transaction.transaction_crud import (
     create_transaction,
     update_transaction,
     remove_transaction,
-    get_account_transactions,
     get_account_transaction_by_id,
     valid_transaction,
-)
-from domain.account.account_crud import (
-    create_account,
-    update_account,
-    remove_account,
-    get_account_by_id,
-    get_user_accounts,
-    account_balance_update,
-)
-from domain.user.user_crud import (
-    validate_user,
-    get_user_by_id,
 )
 from domain.transaction.transaction_schema import (
     TransactionCreate,
     TransactionUpdate,
     TransactionResponse,
 )
-from domain.account.account_schema import (
-    AccountCreate,
-    AccountUpdate,
-    AccountResponse,
-)
-from models import (
-    Account,
-    User,
-)
-
-from domain.user.user_router import get_current_user
 
 router = APIRouter(prefix="/peppermint")
 

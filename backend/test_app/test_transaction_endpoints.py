@@ -230,9 +230,6 @@ def test_transaction_remove(client, test_user):
     account = account_response01.json()[0]
     transactions = get_account_transactions(db, account["id"])
 
-    # transaction[0] = 100, [1] = 25
-    transaction_id = transactions[0].id
-
     assert account["current_balance"] == 125.0
     assert len(transactions) == 2
 
