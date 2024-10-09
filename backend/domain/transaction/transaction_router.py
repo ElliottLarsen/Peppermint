@@ -90,3 +90,16 @@ def transaction_update(
     """
     valid_transaction(db, account_id, transaction_id)
     return update_transaction(db, transaction_update, transaction_id, account_id)
+
+
+@router.delete("/{account_id}/{transaction_id}", status_code=status.HTTP_204_NO_CONTENT)
+def transaction_remove(
+    transaction_id: str,
+    account_id: str,
+    db: Session = Depends(get_db),
+):
+    """
+    Delete transaction router
+    """
+    valid_transaction(db, account_id, transaction_id)
+    return remove_transaction(db, transaction_id, account_id)

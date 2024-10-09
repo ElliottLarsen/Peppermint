@@ -194,7 +194,9 @@ def test_update_transaction(client, test_user):
         "transaction_amount": 50.0,
     }
     # update transaction[0]
-    update_response = client.put(f"/peppermint/{account['id']}/{transaction_id}", json=update_transaction_data)
+    update_response = client.put(
+        f"/peppermint/{account['id']}/{transaction_id}", json=update_transaction_data
+    )
     account_response02 = client.get(
         "/peppermint/account/my_accounts",
         headers={"Authorization": f"Bearer {access_token}"},
@@ -209,10 +211,47 @@ def test_update_transaction(client, test_user):
     assert update_response.json()[0]["transaction_amount"] == 50.0
 
 
-
 # ---------------------------------------------------------
 #   DELETE
 # ---------------------------------------------------------
+
+
+def test_transaction_remove(client, test_user):
+    """
+    Transaction DELETE test
+    """
+    db = SessionLocal()
+    access_token = test_setup_login_user(client, test_user)
+    account_response01 = client.get(
+        "/peppermint/account/my_accounts",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    account = account_response01.json()[0]
+    transactions = get_account_transactions(db, account["id"])
+
+    # transaction[0] = 100, [1] = 25
+    transaction_id = transactions[0].id
+
+    assert account["current_balance"] == 125.0
+    assert len(transactions) == 2
+
+    for transaction in transactions:
+        remove_response = client.delete(
+            f"/peppermint/{account['id']}/{transaction.id}",
+        )
+
+    assert remove_response.status_code == 204
+
+    check_account_response = client.get(
+        "/peppermint/account/my_accounts",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    check_account = check_account_response.json()[0]
+    check_transacations = get_account_transactions(db, check_account["id"])
+
+    assert check_transacations is None
+    assert check_account["current_balance"] == 0.0
 
 
 def test_delete_setup_users(client, test_user):
