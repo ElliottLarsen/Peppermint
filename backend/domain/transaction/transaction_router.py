@@ -46,7 +46,7 @@ router = APIRouter(prefix="/peppermint")
 @router.post("/{account_id}")
 def transaction_create(
     account_id: str,
-    transaction_create:TransactionCreate,
+    transaction_create: TransactionCreate,
     db: Session = Depends(get_db),
 ):
     """
@@ -63,6 +63,7 @@ def transaction_create(
         transaction_amount=new_transaction.transaction_amount,
         account_id=new_transaction.account_id,
     )
+
 
 @router.get("/{account_id}/{transaction_id}")
 def one_transaction_get(

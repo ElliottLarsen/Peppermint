@@ -189,7 +189,6 @@ def test_update_account(client, test_user):
 #  DELETE
 #  -------------------------------------------------------------------
 
-
 def test_account_remove(client, test_user):
     """
     Account remove by id endpoint test
