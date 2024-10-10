@@ -101,7 +101,6 @@ def test_one_account_get(client, test_user):
     )
     account = account_response.json()[0]
     account_id = account["id"]
-
     response = client.get(
         f"/peppermint/account/{account_id}",
         headers={"Authorization": f"Bearer {access_token}"},
@@ -188,7 +187,6 @@ def test_update_account(client, test_user):
 #  -------------------------------------------------------------------
 #  DELETE
 #  -------------------------------------------------------------------
-
 
 def test_account_remove(client, test_user):
     """

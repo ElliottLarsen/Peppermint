@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from starlette import status
@@ -7,38 +7,14 @@ from domain.transaction.transaction_crud import (
     create_transaction,
     update_transaction,
     remove_transaction,
-    get_account_transactions,
     get_account_transaction_by_id,
     valid_transaction,
-)
-from domain.account.account_crud import (
-    create_account,
-    update_account,
-    remove_account,
-    get_account_by_id,
-    get_user_accounts,
-    account_balance_update,
-)
-from domain.user.user_crud import (
-    validate_user,
-    get_user_by_id,
 )
 from domain.transaction.transaction_schema import (
     TransactionCreate,
     TransactionUpdate,
     TransactionResponse,
 )
-from domain.account.account_schema import (
-    AccountCreate,
-    AccountUpdate,
-    AccountResponse,
-)
-from models import (
-    Account,
-    User,
-)
-
-from domain.user.user_router import get_current_user
 
 router = APIRouter(prefix="/peppermint")
 
@@ -46,7 +22,7 @@ router = APIRouter(prefix="/peppermint")
 @router.post("/{account_id}")
 def transaction_create(
     account_id: str,
-    transaction_create:TransactionCreate,
+    transaction_create: TransactionCreate,
     db: Session = Depends(get_db),
 ):
     """
@@ -63,6 +39,7 @@ def transaction_create(
         transaction_amount=new_transaction.transaction_amount,
         account_id=new_transaction.account_id,
     )
+
 
 @router.get("/{account_id}/{transaction_id}")
 def one_transaction_get(
@@ -90,3 +67,16 @@ def transaction_update(
     """
     valid_transaction(db, account_id, transaction_id)
     return update_transaction(db, transaction_update, transaction_id, account_id)
+
+
+@router.delete("/{account_id}/{transaction_id}", status_code=status.HTTP_204_NO_CONTENT)
+def transaction_remove(
+    transaction_id: str,
+    account_id: str,
+    db: Session = Depends(get_db),
+):
+    """
+    Delete transaction router
+    """
+    valid_transaction(db, account_id, transaction_id)
+    return remove_transaction(db, transaction_id, account_id)

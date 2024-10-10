@@ -120,7 +120,7 @@ def test_testuser_get(client, test_user):
     login_response = client.post("/peppermint/user/login", data=test_user)
     access_token = login_response.json()["access_token"]
     response = client.get(
-        "/peppermint/user", headers={"Authorization": f"Bearer {access_token}"}
+        "/peppermint/user/", headers={"Authorization": f"Bearer {access_token}"}
     )
     assert response.status_code == 200
     assert response.json()["username"] == "testuser"
@@ -163,7 +163,7 @@ def test_get_user_all(client):
     )
     access_token = login_response.json()["access_token"]
     response = client.get(
-        "/peppermint/user",
+        "/peppermint/user/",
         headers={
             "Authorization": f"Bearer {access_token}",
         },
@@ -196,7 +196,7 @@ def test_user_update(client, test_user):
         "email": "update@testuser.com",
     }
     response = client.put(
-        "/peppermint/user",
+        "/peppermint/user/",
         json=update_data,
         headers={"Authorization": f"Bearer {access_token}"},
     )
