@@ -14,6 +14,9 @@ from domain.user.user_crud import (
     validate_user,
     get_user_by_id,
 )
+from domain.transaction.transaction_crud import (
+    get_account_transactions,
+)
 from domain.account.account_schema import (
     AccountCreate,
     AccountUpdate,
@@ -70,6 +73,16 @@ def one_account_get(
 ):
     validate_user(db, current_user)
     return get_account_by_id(db, id)
+
+
+@router.get("/{id}/transactions")
+def get_account_transactions(
+    id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    validate_user(db, current_user)
+    return get_account_transactions(db, id)
 
 
 @router.put("/{id}")

@@ -184,6 +184,60 @@ def test_update_account(client, test_user):
     assert response.json()["current_balance"] != 100.00
     assert response.json()["current_balance"] == 150.09
 
+def test_get_account_transactions(client, test_user):
+    """
+    Get all transactions by account id router test
+    """
+    access_token = test_setup_login_user(client, test_user)
+    data = {
+        "institution": "new_testbank",
+        "account_type": "checking",
+        "current_balance": 0.0,
+    }
+    account_response = client.post(
+        "/peppermint/account/",
+        json=data,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    account = account_response.json()[0]
+    account_id = account["id"]
+
+    trans_response01 = client.get(
+        f"/peppermint/account/{account_id}/transactions",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert trans_response01.status_code == 200
+    assert trans_response01 is None
+
+    transaction_data01 = {
+        "transaction_date": "2024-10-09T19:51:34.898000",
+        "transaction_amount": 25.0,
+    }
+
+    transaction_data02 = {
+        "transaction_date": "2024-10-09T19:55:35.898000",
+        "transaction_amount": 75.0,
+    }
+    acct_resp01 = client.post(f"/peppermint/{account['id']}", json=transaction_data01)
+    assert acct_resp01.status_code == 200
+
+    acct_resp02 = client.post(f"/peppermint/{account['id']}", json=transaction_data02)
+    assert acct_resp02.status_code == 200
+
+    all_transaction_resp = client.get(f"/peppermint/account/{account_id}/transactions")
+
+    assert all_transaction_resp == 200
+    assert len(all_transaction_resp.json()) == 2
+
+    for transaction in all_transaction_resp:
+        pass
+        # delete transactions
+
+    # delete temp account
+
+
+    
 
 #  -------------------------------------------------------------------
 #  DELETE
