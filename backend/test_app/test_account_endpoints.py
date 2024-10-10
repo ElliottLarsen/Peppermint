@@ -184,6 +184,7 @@ def test_update_account(client, test_user):
     assert response.json()["current_balance"] != 100.00
     assert response.json()["current_balance"] == 150.09
 
+
 def test_get_account_transactions(client, test_user):
     """
     Get all transactions by account id router test
@@ -199,16 +200,15 @@ def test_get_account_transactions(client, test_user):
         json=data,
         headers={"Authorization": f"Bearer {access_token}"},
     )
-    account = account_response.json()[0]
+    account = account_response.json()
     account_id = account["id"]
 
     trans_response01 = client.get(
         f"/peppermint/account/{account_id}/transactions",
         headers={"Authorization": f"Bearer {access_token}"},
     )
-
     assert trans_response01.status_code == 200
-    assert trans_response01 is None
+    assert trans_response01.json() is None
 
     transaction_data01 = {
         "transaction_date": "2024-10-09T19:51:34.898000",
@@ -219,25 +219,32 @@ def test_get_account_transactions(client, test_user):
         "transaction_date": "2024-10-09T19:55:35.898000",
         "transaction_amount": 75.0,
     }
-    acct_resp01 = client.post(f"/peppermint/{account['id']}", json=transaction_data01)
+
+    acct_resp01 = client.post(f"/peppermint/{account_id}", json=transaction_data01)
     assert acct_resp01.status_code == 200
 
-    acct_resp02 = client.post(f"/peppermint/{account['id']}", json=transaction_data02)
+    acct_resp02 = client.post(f"/peppermint/{account_id}", json=transaction_data02)
     assert acct_resp02.status_code == 200
 
-    all_transaction_resp = client.get(f"/peppermint/account/{account_id}/transactions")
-
-    assert all_transaction_resp == 200
+    all_transaction_resp = client.get(
+        f"/peppermint/account/{account_id}/transactions",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    assert all_transaction_resp.status_code == 200
     assert len(all_transaction_resp.json()) == 2
 
-    for transaction in all_transaction_resp:
-        pass
-        # delete transactions
+    # I was originally going to delete each transaction, but
+    # since we already have a router for that in transaction_router
+    # and it was causing tests to fail. I removed it and just deleted
+    # the temp account
 
-    # delete temp account
+    remove_acct_response = client.delete(
+        f"/peppermint/account/{account_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
 
+    assert remove_acct_response.status_code == 204
 
-    
 
 #  -------------------------------------------------------------------
 #  DELETE

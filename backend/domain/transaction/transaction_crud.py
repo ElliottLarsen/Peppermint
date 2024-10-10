@@ -64,7 +64,7 @@ def update_transaction(
 
     db.add(transaction)
     db.commit()
-    return get_account_transactions(db, account_id)
+    return get_account_transactions_all(db, account_id)
 
 
 def remove_transaction(
@@ -89,7 +89,7 @@ def remove_transaction(
     db.commit()
 
 
-def get_account_transactions(
+def get_account_transactions_all(
     db: Session,
     account_id: str,
 ):
@@ -117,7 +117,7 @@ def valid_transaction(db: Session, account_id: str, transaction_id: str) -> bool
     Checks if a transaction is valid and returns bool
     """
 
-    account_transactions = get_account_transactions(db, account_id)
+    account_transactions = get_account_transactions_all(db, account_id)
     # Debug this. account_transactions might be a list of transactions.
     transaction_id_set = set()
 
