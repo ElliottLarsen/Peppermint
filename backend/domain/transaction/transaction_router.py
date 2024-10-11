@@ -7,6 +7,7 @@ from domain.transaction.transaction_crud import (
     create_transaction,
     update_transaction,
     remove_transaction,
+    get_account_transactions_all,
     get_account_transaction_by_id,
     valid_transaction,
 )
