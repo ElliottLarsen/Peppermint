@@ -1,5 +1,4 @@
 from pydantic import BaseModel, validator
-from models import Account
 from datetime import datetime
 
 

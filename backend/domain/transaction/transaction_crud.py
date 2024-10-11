@@ -73,7 +73,7 @@ def remove_transaction(
     account_id: str,
 ):
 
-    if not valid_transaction(account_id, transaction_id):
+    if not valid_transaction(db, account_id, transaction_id):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Transaction and account mismatch",

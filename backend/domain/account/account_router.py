@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from starlette import status
@@ -12,7 +12,6 @@ from domain.account.account_crud import (
 )
 from domain.user.user_crud import (
     validate_user,
-    get_user_by_id,
 )
 from domain.transaction.transaction_crud import (
     get_account_transactions_all,
@@ -23,7 +22,6 @@ from domain.account.account_schema import (
     AccountResponse,
 )
 from models import (
-    Account,
     User,
 )
 
