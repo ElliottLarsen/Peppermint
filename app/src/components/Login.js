@@ -35,10 +35,8 @@ export default function Login({setIsLoggedIn}) {
 
     return (
         <>
-            <div>
-                <hr />
+            <div class="page-title">
                 <h2>Login</h2>
-                <hr />
             </div>
             <div>
                 <form onSubmit={handleLogin}>
@@ -46,9 +44,11 @@ export default function Login({setIsLoggedIn}) {
                         <label htmlFor="username">username: </label>
                         <input id="username" type="text" placeholder='username' name='username'
                             value={loginData.username} onChange={handleChange} required />
+                        
                         <label htmlFor="password">password: </label>
                         <input id='password' type='password' placeholder='password' name='password'
                             value={loginData.password} onChange={handleChange} required />
+                        
                         <button type='submit'>login</button>
                     </fieldset>
                 </form>
