@@ -4,6 +4,7 @@ import './App.css';
 import Login from "./components/Login";
 import Logout from "./components/Logout";
 import Register from './components/Register';
+import User from './components/User';
 import Welcome from './components/Welcome';
 
 function App() {
@@ -25,6 +26,8 @@ function App() {
                     <nav>
                         {isLoggedIn ? (
                             <>
+                            <Link to="/">Home</Link>
+                            <Link to='/user'>Profile</Link>
                             <Link to='/logout'>Logout</Link>
                             </>
                         
@@ -43,8 +46,10 @@ function App() {
             <Routes>
                 <Route path="/" element={<Welcome />} />
                 <Route path='/register' element={<Register />} />
-                <Route path="/login" element={<Login setisLoggedIn={setIsLoggedIn} />} /> 
-                <Route path="/logout" element={<Logout setisLoggedIn={setIsLoggedIn} />} />
+                <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+                <Route path="/user" element={<User />} /> 
+                <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} />} />
+                
             </Routes>
             </main>
             <footer>
