@@ -1,17 +1,11 @@
 import pytest
 from fastapi.testclient import TestClient
 from main import app
-import json
 from domain.transaction.transaction_crud import (
-    get_account_transactions,
-    get_account_transaction_by_id,
+    get_account_transactions_all,
 )
-from domain.user.user_crud import get_user_by_username, get_user_by_id
-from domain.account.account_crud import (
-    create_account,
-    get_account_by_id,
-    account_balance_update,
-)
+from domain.user.user_crud import get_user_by_username
+
 from database import SessionLocal
 
 
@@ -138,7 +132,7 @@ def test_one_transaction_get(client, test_user):
 
     account = account_response01.json()[0]
 
-    before_transaction = get_account_transactions(db, account["id"])
+    before_transaction = get_account_transactions_all(db, account["id"])
 
     new_transaction_data = {
         "transaction_date": "2024-10-01T19:51:34.898000",
@@ -156,7 +150,7 @@ def test_one_transaction_get(client, test_user):
     transaction_response = client.get(f"/peppermint/{account['id']}/{transaction_id}")
 
     account_check = account_response02.json()[0]
-    after_transaction = get_account_transactions(db, account["id"])
+    after_transaction = get_account_transactions_all(db, account["id"])
 
     assert transaction_response.status_code == 200
     assert len(before_transaction) == 1
@@ -181,7 +175,7 @@ def test_update_transaction(client, test_user):
     )
 
     account = account_response01.json()[0]
-    transactions = get_account_transactions(db, account["id"])
+    transactions = get_account_transactions_all(db, account["id"])
 
     # transaction[0] = 100, [1] = 25
     transaction_id = transactions[0].id
@@ -228,7 +222,7 @@ def test_transaction_remove(client, test_user):
     )
 
     account = account_response01.json()[0]
-    transactions = get_account_transactions(db, account["id"])
+    transactions = get_account_transactions_all(db, account["id"])
 
     assert account["current_balance"] == 75.0
     assert len(transactions) == 2
@@ -245,7 +239,7 @@ def test_transaction_remove(client, test_user):
         headers={"Authorization": f"Bearer {access_token}"},
     )
     check_account = check_account_response.json()[0]
-    check_transacations = get_account_transactions(db, check_account["id"])
+    check_transacations = get_account_transactions_all(db, check_account["id"])
 
     assert check_transacations is None
     assert check_account["current_balance"] == 0.0
