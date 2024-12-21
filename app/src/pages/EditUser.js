@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const User = () => {
     const [userData, setUserData] = useState(null);
@@ -13,6 +14,8 @@ const User = () => {
         password1: '', 
         password2: ''
     });
+    
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -59,6 +62,7 @@ const User = () => {
                 }
             });
             alert('User account updated succesfully');
+            navigate("/user");
         } catch (error) {
             console.error('Error updated user: ', error);
         }
@@ -79,7 +83,7 @@ const User = () => {
     return (
         <>
         <div class="page-title">
-            <h2>User Profile</h2>
+            <h2>Update User Profile</h2>
         </div>
         <div>
             <form onSubmit={handleSubmit}>

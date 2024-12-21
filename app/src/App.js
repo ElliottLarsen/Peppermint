@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link, Routes, Route } from 'react-router-dom';
 import './App.css';
-import Login from "./components/Login";
+import Login from "./pages/Login";
 import Logout from "./components/Logout";
-import Register from './components/Register';
-import User from './components/User';
-import Welcome from './components/Welcome';
+import Register from './pages/Register';
+import Profile from './pages/User';
+import User from './pages/EditUser';
+import Welcome from './pages/Welcome';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -47,7 +48,8 @@ function App() {
                 <Route path="/" element={<Welcome />} />
                 <Route path='/register' element={<Register />} />
                 <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-                <Route path="/user" element={<User />} /> 
+                <Route path="/user" element={<Profile />} /> 
+                <Route path="/user/edit" element={<User />} />
                 <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} />} />
                 
             </Routes>

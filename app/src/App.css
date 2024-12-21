@@ -34,6 +34,17 @@ footer {
     font-weight: 700;
 }
 
+.edit-button {
+    font-size: 26px;
+    font-weight: 700;
+    color: blue;
+    cursor: pointer;
+}
+
+.profile {
+    margin:0 5%;
+}
+
 /* Form Styling */
 
 form {
