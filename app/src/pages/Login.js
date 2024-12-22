@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
 
 
-export default function Login({setIsLoggedIn}) {
+export default function Login({ setIsLoggedIn }) {
     const [loginData, setLoginData] = useState({ username: "", password: ""});
     const navigateTo = useNavigate();
 
@@ -23,13 +23,13 @@ export default function Login({setIsLoggedIn}) {
         params.append("password", loginData.password);
         axios.post("http://127.0.0.1:8000/peppermint/user/login", params)
             .then((res) => {
-                localStorage.setItem("Login error", res.response);
+                localStorage.setItem("token", res.data.access_token);
                 setIsLoggedIn(true);
                 navigateTo("/");
             })
             .catch((e) => {
-                console.error("Loggin error", e.response);
-                window.alert("Loggin error!");
+                console.error("Login error", e.response);
+                window.alert("Login error!");
             })
     }
 
@@ -42,12 +42,10 @@ export default function Login({setIsLoggedIn}) {
                 <form onSubmit={handleLogin}>
                     <fieldset>
                         <label htmlFor="username">username: </label>
-                        <input id="username" type="text" placeholder='username' name='username'
-                            value={loginData.username} onChange={handleChange} required />
+                        <input id="username" type="text" placeholder='username' name='username' value={loginData.username} onChange={handleChange} required />
                         
                         <label htmlFor="password">password: </label>
-                        <input id='password' type='password' placeholder='password' name='password'
-                            value={loginData.password} onChange={handleChange} required />
+                        <input id='password' type='password' placeholder='password' name='password' value={loginData.password} onChange={handleChange} required />
                         
                         <button type='submit'>login</button>
                     </fieldset>
