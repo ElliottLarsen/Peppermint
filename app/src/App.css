@@ -26,6 +26,15 @@ nav a {
 
 .page-title { padding: 2%;}
 
+.account-card {
+    border: 1px solid black;
+    padding: 1%;
+}
+
+.user-landing {
+    display: flex;
+}
+
 footer {
     bottom: 0;
     width: 100%;
