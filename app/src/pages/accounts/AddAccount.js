@@ -12,7 +12,7 @@ export default function AddAccount() {
     const navigate = useNavigate();
 
     const handleAccountSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault()
         try {
             const token = localStorage.getItem('token');
             await axios.post("http://127.0.0.1:8000/peppermint/account/", addNewAccount, {

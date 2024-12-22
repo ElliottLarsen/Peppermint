@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
+import FormatCurrency from './FormatCurrency';
 
 const ViewAccounts = () => {
     const [accounts, setAccounts] = useState(null);
@@ -37,9 +38,7 @@ const ViewAccounts = () => {
             <ul>
                 {accounts.map(account => (
                     <li key={account.id}>
-                        <p>{account.institution}</p>
-                        <p>{account.account_type}</p>
-                        <p>{account.current_balance}</p>
+                        <p>{account.institution} <strong><FormatCurrency amount={account.current_balance}/></strong></p>
                     </li>
                 ))}
             </ul>
