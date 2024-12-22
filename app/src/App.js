@@ -4,8 +4,10 @@ import './App.css';
 import Login from "./pages/Login";
 import Logout from "./components/Logout";
 import Register from './pages/Register';
-import Profile from './pages/User';
-import User from './pages/EditUser';
+import Accounts from './pages/accounts/Accounts';
+import AddAccount from './pages/accounts/AddAccount';
+import Profile from './pages/user/User';
+import User from './pages/user/EditUser';
 import Welcome from './pages/Welcome';
 
 function App() {
@@ -28,6 +30,7 @@ function App() {
                         {isLoggedIn ? (
                             <>
                             <Link to="/">Home</Link>
+                            <Link to="/accounts">Accounts</Link>
                             <Link to='/user'>Profile</Link>
                             <Link to='/logout'>Logout</Link>
                             </>
@@ -48,6 +51,8 @@ function App() {
                 <Route path="/" element={<Welcome />} />
                 <Route path='/register' element={<Register />} />
                 <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+                <Route path="/accounts" element={<Accounts />} />
+                <Route path="/accounts/add_account" element={<AddAccount />} />
                 <Route path="/user" element={<Profile />} /> 
                 <Route path="/user/edit" element={<User />} />
                 <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} />} />

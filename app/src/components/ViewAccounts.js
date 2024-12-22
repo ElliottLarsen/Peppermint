@@ -33,9 +33,6 @@ const ViewAccounts = () => {
 
     return (
         <>
-        <div class="page-title">
-            <h2>Accounts</h2>
-        </div>
         <div>
             <ul>
                 {accounts.map(account => (

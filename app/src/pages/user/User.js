@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
 import { MdOutlineEdit } from "react-icons/md";
-import ViewAccounts from '../components/ViewAccounts';
+import ViewAccounts from '../../components/ViewAccounts';
 
 const Profile = () => {
     const [userData, setUserData] = useState(null);
