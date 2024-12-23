@@ -8,6 +8,7 @@ import GetAccounts from './pages/accounts/Accounts';
 import AddAccount from './pages/accounts/AddAccount';
 import EditAccount from './pages/accounts/EditAccount';
 import GetAllTransactions from './pages/transactions/Transactions';
+import AddTransaction from './pages/transactions/AddTransaction';
 import Profile from './pages/user/User';
 import User from './pages/user/EditUser';
 import Welcome from './pages/Welcome';
@@ -58,6 +59,7 @@ function App() {
                 <Route path="/accounts/add_account" element={<AddAccount />} />
                 <Route path="/accounts/edit_account/:id" element={<EditAccount />} />
                 <Route path="/transactions" element={<GetAllTransactions />} />
+                <Route path="/transactions/add_transaction/" element={<AddTransaction />} />
                 <Route path="/user" element={<Profile />} /> 
                 <Route path="/user/edit" element={<User />} />
                 <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} />} />

@@ -34,39 +34,58 @@ const GetAllTransactions = () => {
         }
     };
 
-    const fetchAllTransactions = async() => {
+    const getAccountIds = () => accounts.map((account) => account.id);
+
+    const fetchAccountTransactions =  async (account_id) => {
         try {
             const token = localStorage.getItem('token');
-            const accountResponses = await Promise.all(
-                accounts.map((id) =>
-                    axios.get(`http://127.0.0.1:8000/peppermint/account/${id}/transactions`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    })
-                )
-            );
-
-            const combinedTransactions = accountResponses
-                .flatMap((response) => (response.data))
-                .sort((a,b) => new Date(b.date) - new Date(a.date));
-
-            setTransactions(combinedTransactions);
+            const response = await axios.get(`http://127.0.0.1:8000/peppermint/account/${account_id}/transactions`, {
+                    headers: {
+                         Authorization: `Bearer ${token}`
+                    }
+                });
+            if (response.data) {
+                return response.data;
+            } else {
+                console.warn("No transactions found for that account");
+                return [];
+            }
         } catch (error) {
             console.error('Error retrieving accounts.', error);
             if (error.response.status === 401) {
                 navigate('/login');
+            return [];
             }
-        }      
+        }
+    };
+
+    const fetchAllTransactions = async() => {
+       const accountIds = getAccountIds();
+       console.log("IDS:", accountIds)
+       const allTransactions = [];
+
+       for (const id of accountIds) {
+        const transactions = await fetchAccountTransactions(id);
+        if (transactions.length === 0) {
+            console.alert('Account has no transactions');
+        }
+        allTransactions.push(...transactions);
+       }
+       if (allTransactions.length === 0) {
+        console.alert('No Transactions available at this time')
+        setTransactions([]);
+       } else {
+        setTransactions(allTransactions);
+        }
     };
 
     if (!accounts) {
         return <div><p>No account info available.</p></div>;
     }
 
-    if (!transactions) {
-        return <div><p>No transaction info available.</p></div>;
-    }
+    // if (!transactions) {
+    //     return <div><p>No transaction info available.</p></div>;
+    // }
 
     const handleDeleteTransaction = async(account_id, id) => {
         try {
@@ -92,6 +111,9 @@ const GetAllTransactions = () => {
         <div>
         <i class="add-button" title="Add New Transaction"><MdAddCircleOutline onClick={() => navigate('/transactions/add_transaction')} /></i>
         <div>
+            { (!transactions) ? (
+                <p>No transactions found </p>
+            ) : (
             <table>
                 <thead>
                     <tr>
@@ -117,10 +139,11 @@ const GetAllTransactions = () => {
                 ))}
                 </tbody>
             </table>
+            )}
         </div>
         </div>
         </>
-    )
+    );
 };
 
 export default GetAllTransactions;
