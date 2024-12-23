@@ -6,7 +6,7 @@ import FormatCurrency from '../../components/FormatCurrency';
 
 const GetAllTransactions = () => {
     const navigate = useNavigate();
-    const [transactions, setTransactions] = useState(null);
+    const [transactions, setTransactions] = useState([]);
     const [accounts, setAccounts] = useState(null);
 
     useEffect(() => {
@@ -14,8 +14,10 @@ const GetAllTransactions = () => {
     }, []);
 
     useEffect(() => {
+        if (accounts) {
         fetchAllTransactions();
-    }, []);
+        }
+    }, [accounts]);
 
     const fetchAccounts = async() => {
         try {
@@ -44,12 +46,8 @@ const GetAllTransactions = () => {
                          Authorization: `Bearer ${token}`
                     }
                 });
-            if (response.data) {
-                return response.data;
-            } else {
-                console.warn("No transactions found for that account");
-                return [];
-            }
+            return response.data || [];
+            
         } catch (error) {
             console.error('Error retrieving accounts.', error);
             if (error.response.status === 401) {
@@ -72,7 +70,7 @@ const GetAllTransactions = () => {
         allTransactions.push(...transactions);
        }
        if (allTransactions.length === 0) {
-        console.alert('No Transactions available at this time')
+        alert('No Transactions available at this time')
         setTransactions([]);
        } else {
         setTransactions(allTransactions);
@@ -111,7 +109,7 @@ const GetAllTransactions = () => {
         <div>
         <i class="add-button" title="Add New Transaction"><MdAddCircleOutline onClick={() => navigate('/transactions/add_transaction')} /></i>
         <div>
-            { (!transactions) ? (
+            { transactions.length === 0 ? (
                 <p>No transactions found </p>
             ) : (
             <table>
