@@ -127,7 +127,7 @@ const GetAllTransactions = () => {
                         <td>{transaction.transaction_category}</td>
                         <td><FormatCurrency amount={transaction.transaction_amount}/></td>
                         <td><i class="edit-button" title="Edit Account"><MdOutlineEdit 
-                            onClick={() => navigate(`/transactions/edit_transaction/${transaction.id}`)} /></i>
+                            onClick={() => navigate(`/transactions/edit_transaction/${transaction.account_id}/${transaction.id}`)} /></i>
                         <i class="delete-button" title="Delete Account"><MdDeleteOutline 
                             onClick={() => handleDeleteTransaction(transaction.account_id, transaction.id)} /></i></td>
                     </tr>

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { adjustTransactionAmount } from '../../components/AdjustTransactionAmount';
+import { categories } from '../../components/TransactionCategories';
 
 export default function AddTransaction() {
     const [accountOption, setAccountOption] = useState([]);
@@ -51,8 +53,16 @@ export default function AddTransaction() {
     const handleTransactionSubmit = async (e) => {
         e.preventDefault()
         try {
+            const adjustedTransaction = {
+                ...addNewTransaction,
+                transaction_amount: adjustTransactionAmount(
+                    addNewTransaction.transaction_category,
+                    addNewTransaction.transaction_amount
+                ),
+            };
+
             const token = localStorage.getItem('token');
-            await axios.post(`http://127.0.0.1:8000/peppermint/${selectedAccount}`, addNewTransaction, {
+            const response = await axios.post(`http://127.0.0.1:8000/peppermint/${selectedAccount}`, adjustedTransaction, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -61,7 +71,7 @@ export default function AddTransaction() {
             transaction_date: '',
             transaction_description: '',
             transaction_category: '',
-            transaction_amount: ''
+            transaction_amount: '',
         });
         alert("Transaction added succesfully!")
         navigate("/transactions")
@@ -82,7 +92,6 @@ export default function AddTransaction() {
         setSelectedAccount(evt.target.value);
     };
 
-
     return (
         <>
         <div>
@@ -94,7 +103,7 @@ export default function AddTransaction() {
                     <label htmlFor='account_id'>Account</label>
                     <select id="account_id" value={selectedAccount} onChange={handleAccountSelect}>
                     { accountOption && accountOption.map((account) => (
-                        <option key={account.value } value={account.value}>
+                        <option key={ account.value } value={ account.value }>
                             { account.key }
                         </option>
                     ))}
@@ -110,21 +119,12 @@ export default function AddTransaction() {
 
                     <label htmlFor='transaction_category'>Category:</label>
                     <select name='transaction_category' id='transaction_category' onChange={handleTransactionChange}>
-                        <option value="misc" selected>Misc.</option>
-                        <option value="auto-transport">Auto & Transportation</option>
-                        <option value="gas">Gas</option>
-                        <option value="groceries">Groceries</option>
-                        <option value="food-restaurants">Food & Restaurants</option>
-                        <option value="bills-utilities">Bills & Utilities</option>
-                        <option value="education">Education</option>
-                        <option value="health-fitness">Health & Fitness</option>
-                        <option value="fees-charges">Fees & Charges</option>
-                        <option value="mortgage-rent">Mortgage & Rent</option>
-                        <option value="personal-care">Personal Care</option>
-                        <option value="pets">Pets</option>
-                        <option value="income">Income</option>
-                        <option value="transfer">Transfer</option>
-                        <option value="shopping">Shopping</option>
+                        <option value="" selected></option>
+                        { categories.map((category) => (
+                            <option key={ category.value } value={ category.value }>
+                                { category.key }
+                            </option>
+                    ))}
                     </select>
 
                     <label htmlFor='transaction_amount' className='required'>Amount:</label>
