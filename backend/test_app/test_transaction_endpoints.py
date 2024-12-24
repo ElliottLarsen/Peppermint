@@ -101,6 +101,8 @@ def test_transaction_create(client, test_user):
 
     transaction_data = {
         "transaction_date": "2024-09-29T19:51:34.898000",
+        "transaction_description": "Trader Jo",
+        "transaction_category": "Groceries",
         "transaction_amount": 100.0,
     }
 
@@ -115,6 +117,8 @@ def test_transaction_create(client, test_user):
 
     assert response.status_code == 200
     assert response.json()["transaction_date"] == "2024-09-29T19:51:34.898000"
+    assert response.json()["transaction_description"] == "Trader Jo"
+    assert response.json()["transaction_category"] == "Groceries"
     assert "transaction_amount" in response.json()
     assert account_check["current_balance"] == 100.0
 
@@ -136,6 +140,8 @@ def test_one_transaction_get(client, test_user):
 
     new_transaction_data = {
         "transaction_date": "2024-10-01T19:51:34.898000",
+        "transaction_description": "Whole Fud",
+        "transaction_category": "Groceries",
         "transaction_amount": 25.0,
     }
 
@@ -185,6 +191,8 @@ def test_update_transaction(client, test_user):
 
     update_transaction_data = {
         "transaction_date": "2024-10-03T12:51:34.898000",
+        "transaction_description": "Trader Yes",
+        "transaction_category": "Gas",
         "transaction_amount": 50.0,
     }
     # update transaction[0]
@@ -202,6 +210,8 @@ def test_update_transaction(client, test_user):
     assert updated_account["current_balance"] != 125.0
     assert updated_account["current_balance"] == 75.0
     assert update_response.json()[0]["transaction_date"] != "2024-10-01T19:51:34.898000"
+    assert update_response.json()[0]["transaction_description"] == "Trader Yes"
+    assert update_response.json()[0]["transaction_category"] == "Gas"
     assert update_response.json()[0]["transaction_amount"] == 50.0
 
 

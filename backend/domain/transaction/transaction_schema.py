@@ -4,6 +4,8 @@ from datetime import datetime
 
 class TransactionCreate(BaseModel):
     transaction_date: datetime
+    transaction_description: str
+    transaction_category: str
     transaction_amount: float
 
     @validator("transaction_date", "transaction_amount")
@@ -15,6 +17,8 @@ class TransactionCreate(BaseModel):
 
 class TransactionUpdate(BaseModel):
     transaction_date: datetime
+    transaction_description: str
+    transaction_category: str
     transaction_amount: float
 
     @validator("transaction_date", "transaction_amount")
@@ -27,5 +31,7 @@ class TransactionUpdate(BaseModel):
 class TransactionResponse(BaseModel):
     id: str
     transaction_date: datetime
+    transaction_description: str
+    transaction_category: str
     transaction_amount: float
     account_id: str

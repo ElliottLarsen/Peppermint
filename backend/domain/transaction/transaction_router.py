@@ -29,7 +29,7 @@ def transaction_create(
     """
     Create transaction router
     """
-    # do I need to validate account?
+
     new_transaction = create_transaction(
         db, transaction_create=transaction_create, account_id=account_id
     )
@@ -37,6 +37,8 @@ def transaction_create(
     return TransactionResponse(
         id=new_transaction.id,
         transaction_date=new_transaction.transaction_date,
+        transaction_description=new_transaction.transaction_description,
+        transaction_category=new_transaction.transaction_category,
         transaction_amount=new_transaction.transaction_amount,
         account_id=new_transaction.account_id,
     )
