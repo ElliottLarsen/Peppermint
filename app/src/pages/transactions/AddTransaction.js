@@ -4,13 +4,13 @@ import axios from 'axios';
 
 export default function AddTransaction() {
     const [accountOption, setAccountOption] = useState([]);
-    const [selectedAccount, setSelectedAccount] = useState([]);
+    const [selectedAccount, setSelectedAccount] = useState("");
     const [addNewTransaction, setNewTransaction] = useState({
         transaction_date: '',
         transaction_description: '',
         transaction_category: '',
         transaction_amount: '',
-    })
+    });
 
     useEffect(() => {
         fetchAccounts();
@@ -24,23 +24,20 @@ export default function AddTransaction() {
     const fetchAccounts = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://127.0.0.1:8000/peppermint/account/my_accounts`, {
+            const response = await axios.get("http://127.0.0.1:8000/peppermint/account/my_accounts", {
             headers: {
                 Authorization: `Bearer ${token}`
             }
             });
-            const accounts = [];
-            response.data.forEach((account) => {
-                accounts.push({ 
+            const accounts = response.data.map((account) => ({
                     key: account.institution,
                     value: account.id,   
-                });
-            });
+            }));
             setAccountOption([
-                {key: "Select account", value: ""},
+                {key: "", value: ""},
                 ...accounts
             ])
-            console.log("options", accounts);
+            
         } catch (error) {
             console.error('Error retrieving accounts.', error);
             if (error.response.status === 401) {
@@ -51,10 +48,11 @@ export default function AddTransaction() {
         }
     };
 
-    const handleTransactionSubmit = async (account_id) => {
+    const handleTransactionSubmit = async (e) => {
+        e.preventDefault()
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`http://127.0.0.1:8000/peppermint/${account_id}/`, addNewTransaction, {
+            await axios.post(`http://127.0.0.1:8000/peppermint/${selectedAccount}`, addNewTransaction, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -63,8 +61,8 @@ export default function AddTransaction() {
             transaction_date: '',
             transaction_description: '',
             transaction_category: '',
-            transaction_amount: '',
-        })
+            transaction_amount: ''
+        });
         alert("Transaction added succesfully!")
         navigate("/transactions")
         } catch (error) {
@@ -84,7 +82,6 @@ export default function AddTransaction() {
         setSelectedAccount(evt.target.value);
     };
 
-    const { label, name, ...data} = fetchAccounts();
 
     return (
         <>
@@ -92,11 +89,10 @@ export default function AddTransaction() {
             <h3>Add New Transaction</h3>
         </div>
         <div>
-            <form onSubmit={handleTransactionSubmit(selectedAccount)}>
+            <form onSubmit={handleTransactionSubmit}>
                 <fieldset>
                     <label htmlFor='account_id'>Account</label>
-                    <select id="account_id" value={selectedAccount} onChange={handleAccountSelect}>Select Account
-                    <option value=""></option>
+                    <select id="account_id" value={selectedAccount} onChange={handleAccountSelect}>
                     { accountOption && accountOption.map((account) => (
                         <option key={account.value } value={account.value}>
                             { account.key }
@@ -105,7 +101,7 @@ export default function AddTransaction() {
                     </select>
 
                     <label htmlFor='transaction_date' className='required'>Date </label>
-                    <input type='date' name='transaction_date' id='transaction_date'
+                    <input type='datetime-local' name='transaction_date' id='transaction_date'
                     onChange={handleTransactionChange} required />
 
                     <label htmlFor='transaction_description'>Description: </label>
@@ -113,7 +109,7 @@ export default function AddTransaction() {
                     onChange={handleTransactionChange} required />
 
                     <label htmlFor='transaction_category'>Category:</label>
-                    <select name='transaction_category' id='transaction_category'>
+                    <select name='transaction_category' id='transaction_category' onChange={handleTransactionChange}>
                         <option value="misc" selected>Misc.</option>
                         <option value="auto-transport">Auto & Transportation</option>
                         <option value="gas">Gas</option>
