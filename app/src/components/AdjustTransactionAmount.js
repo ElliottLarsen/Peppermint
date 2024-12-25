@@ -2,7 +2,8 @@ export const adjustTransactionAmount = (category, amount) => {
     const creditCategories = new Set([
         'credit', 
         'transfer',
-        'income'
+        'income',
+        'refund'
     ]);
 
     return creditCategories.has(category)

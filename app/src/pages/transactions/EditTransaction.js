@@ -10,6 +10,7 @@ export default function EditTransaction() {
     const [transactionData, setTransactionData] = useState(null);
     const [accountOption, setAccountOption] = useState([]);
     const [selectedAccount, setSelectedAccount] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [formData, setFormData] = useState({
@@ -35,9 +36,11 @@ export default function EditTransaction() {
             });
 
             setTransactionData(response.data);
-            setSelectedAccount(accountId);
+            setSelectedAccount(response.data.account_id);
+            console.log("OLD", response.data.account_id);
+            setSelectedCategory(response.data.transaction_category);
             setFormData({
-                account_id: selectedAccount,
+                account_id: response.data.account_id,
                 transaction_date: response.data.transaction_date,
                 transaction_description: response.data.transaction_description,
                 transaction_category: response.data.transaction_category,
@@ -52,9 +55,30 @@ export default function EditTransaction() {
         fetchTransactionData();
     }, [accountId, transactionId]);
 
-    const handleAccountSelect = (evt) => {
-        setSelectedAccount(evt.target.value);
+    const handleAccountSelect = (e) => {
+        const selectedValue = e.target.value;
+        console.log("ID BEFORE", selectedAccount);
+        setSelectedAccount(selectedValue);
+        setFormData({
+            ...formData,
+            account_id: selectedValue,
+        });
+        console.log("VALUE", selectedValue, "NEW", selectedAccount);
+        // setFormData((prevFormData) => {
+        //     const updatedFormData = { ...prevFormData, account_id:selectedAccount};
+        //     console.log("ID AFTER", updatedFormData);
+        //     return updatedFormData;
+        // });
     };
+
+    const handleCategorySelect = (e) => {
+        const selectedValue = e.target.value;
+        setSelectedCategory(selectedValue);
+        setFormData({
+            ...formData,
+            transaction_category: selectedValue,
+        });
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -75,7 +99,7 @@ export default function EditTransaction() {
                 ),
             };
             const token = localStorage.getItem('token');
-            await axios.put(`http://127.0.0.1:8000/peppermint/${accountId}/${transactionId}`, adjustedFormData, {
+            await axios.put(`http://127.0.0.1:8000/peppermint/${selectedAccount}/${transactionId}`, adjustedFormData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -128,8 +152,7 @@ export default function EditTransaction() {
                     onChange={handleChange} required />
 
                     <label htmlFor='transaction_category'>Category:</label>
-                    <select name='transaction_category' id='transaction_category' onChange={handleChange}>
-                        <option value={formData.transaction_category} selected></option>
+                    <select id='transaction_category' value={selectedCategory} onChange={handleCategorySelect}>
                         { categories.map((category) => (
                             <option key={ category.value } value={ category.value }>
                                 { category.key }

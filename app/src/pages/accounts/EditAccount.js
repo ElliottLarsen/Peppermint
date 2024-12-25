@@ -93,7 +93,7 @@ const EditAccount = () => {
                     onChange={handleChange} required />
 
                     <label htmlFor='current_balance' className='required'>Current balance</label>
-                    <input type="number" min="0" step="0.01" name="current_balance" value={formData.current_balance} id='current_balance'
+                    <input type="number" step="0.01" name="current_balance" value={formData.current_balance} id='current_balance'
                     onChange={handleChange} required/>
                     
                     <button type="submit">Add</button>
