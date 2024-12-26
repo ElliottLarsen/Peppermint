@@ -62,7 +62,7 @@ export default function AddTransaction() {
             };
 
             const token = localStorage.getItem('token');
-            const response = await axios.post(`http://127.0.0.1:8000/peppermint/${selectedAccount}`, adjustedTransaction, {
+            await axios.post(`http://127.0.0.1:8000/peppermint/${selectedAccount}`, adjustedTransaction, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -101,7 +101,7 @@ export default function AddTransaction() {
             <form onSubmit={handleTransactionSubmit}>
                 <fieldset>
                     <label htmlFor='account_id'>Account</label>
-                    <select id="account_id" value={selectedAccount} onChange={handleAccountSelect}>
+                    <select id="account_id" value={selectedAccount} onChange={handleAccountSelect} required>
                     { accountOption && accountOption.map((account) => (
                         <option key={ account.value } value={ account.value }>
                             { account.key }

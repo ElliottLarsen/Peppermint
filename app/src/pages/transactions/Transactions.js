@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
 import { MdOutlineEdit, MdAddCircleOutline, MdDeleteOutline } from "react-icons/md";
 import FormatCurrency from '../../components/FormatCurrency';
+import FormatDate from '../../components/FormatDate';
 
 const GetAllTransactions = () => {
     const navigate = useNavigate();
@@ -57,22 +58,21 @@ const GetAllTransactions = () => {
         }
     };
 
-    const fetchAllTransactions = async() => {
-       const accountIds = getAccountIds();
-       const allTransactions = [];
+    const fetchAllTransactions = async () => {
+        const accountIds = getAccountIds();
+        const allTransactions = [];
 
-       for (const id of accountIds) {
-        const transactions = await fetchAccountTransactions(id);
-        // if (transactions.length === 0) {
-        //     console.warn('Account has no transactions');
-        // }
-        allTransactions.push(...transactions);
-       }
-       if (allTransactions.length === 0) {
-        alert('No Transactions available at this time')
-        setTransactions([]);
-       } else {
-        setTransactions(allTransactions);
+        for (const id of accountIds) {
+            const transactions = await fetchAccountTransactions(id);
+            allTransactions.push(...transactions);
+        }
+
+        if (allTransactions.length === 0) {
+            alert('No Transactions available at this time');
+            setTransactions([]);
+        } else {
+            const sortedTransactions = allTransactions.sort((a,b) => new Date(b.transaction_date) - new Date(a.transaction_date));
+            setTransactions(sortedTransactions);
         }
     };
 
@@ -103,8 +103,10 @@ const GetAllTransactions = () => {
         <div class="page-title">
             <h2>Transactions</h2>
         </div>
+        <div class='account-table'>
         <div>
         <i class="add-button" title="Add New Transaction"><MdAddCircleOutline onClick={() => navigate('/transactions/add_transaction')} /></i>
+        </div>
         <div>
             { transactions.length === 0 ? (
                 <p>No transactions found </p>
@@ -122,7 +124,7 @@ const GetAllTransactions = () => {
                 <tbody>
                 {transactions.map(transaction => (
                     <tr key={transaction.id}>
-                        <td>{transaction.transaction_date}</td>
+                        <td><FormatDate date={transaction.transaction_date}/></td>
                         <td>{transaction.transaction_description}</td>
                         <td>{transaction.transaction_category}</td>
                         <td><FormatCurrency amount={transaction.transaction_amount}/></td>

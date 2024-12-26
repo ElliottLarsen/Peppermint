@@ -2,14 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { categories } from '../../components/TransactionCategories';
-import FetchAccounts from '../../components/FetchAccounts';
 import { adjustTransactionAmount } from '../../components/AdjustTransactionAmount';
 
 export default function EditTransaction() {
     const { accountId, transactionId } = useParams();
     const [transactionData, setTransactionData] = useState(null);
-    const [accountOption, setAccountOption] = useState([]);
-    const [selectedAccount, setSelectedAccount] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -22,8 +19,6 @@ export default function EditTransaction() {
 
     const navigate = useNavigate();
     
-    
-
     useEffect(() => {
         const fetchTransactionData = async () => {
             try {
@@ -35,16 +30,15 @@ export default function EditTransaction() {
                 
             });
 
+            const transactionAmount = response.data.transaction_amount;
+            
             setTransactionData(response.data);
-            setSelectedAccount(response.data.account_id);
-            console.log("OLD", response.data.account_id);
             setSelectedCategory(response.data.transaction_category);
             setFormData({
-                account_id: response.data.account_id,
                 transaction_date: response.data.transaction_date,
                 transaction_description: response.data.transaction_description,
                 transaction_category: response.data.transaction_category,
-                transaction_amount: response.data.transaction_amount
+                transaction_amount: transactionAmount < 0 ? Math.abs(transactionAmount) : transactionAmount
             });
             setLoading(false);
             } catch (error) {
@@ -54,22 +48,6 @@ export default function EditTransaction() {
         };
         fetchTransactionData();
     }, [accountId, transactionId]);
-
-    const handleAccountSelect = (e) => {
-        const selectedValue = e.target.value;
-        console.log("ID BEFORE", selectedAccount);
-        setSelectedAccount(selectedValue);
-        setFormData({
-            ...formData,
-            account_id: selectedValue,
-        });
-        console.log("VALUE", selectedValue, "NEW", selectedAccount);
-        // setFormData((prevFormData) => {
-        //     const updatedFormData = { ...prevFormData, account_id:selectedAccount};
-        //     console.log("ID AFTER", updatedFormData);
-        //     return updatedFormData;
-        // });
-    };
 
     const handleCategorySelect = (e) => {
         const selectedValue = e.target.value;
@@ -99,7 +77,7 @@ export default function EditTransaction() {
                 ),
             };
             const token = localStorage.getItem('token');
-            await axios.put(`http://127.0.0.1:8000/peppermint/${selectedAccount}/${transactionId}`, adjustedFormData, {
+            await axios.put(`http://127.0.0.1:8000/peppermint/${accountId}/${transactionId}`, adjustedFormData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -131,17 +109,6 @@ export default function EditTransaction() {
         <div>
             <form onSubmit={handleSubmit}>
                 <fieldset>
-                    <label htmlFor='account_id'>Account</label>
-                    <FetchAccounts 
-                        setAccountOption={setAccountOption}
-                        />
-                    <select id="account_id" value={selectedAccount} onChange={handleAccountSelect}>
-                    { accountOption && accountOption.map((account) => (
-                        <option key={ account.value } value={ account.value }>
-                            { account.key }
-                        </option>
-                    ))}
-                    </select>
 
                     <label htmlFor='transaction_date' className='required'>Date </label>
                     <input type='datetime-local' name='transaction_date' value={formData.transaction_date} id='transaction_date'

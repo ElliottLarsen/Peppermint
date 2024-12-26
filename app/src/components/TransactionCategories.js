@@ -11,7 +11,7 @@ export const categories = ([
     { key: "Income", value: "income" },
     { key: "Misc.", value: "misc" },
     { key: "Mortgage & Rent", value: "mortgage-rent" },
-    { key: "Personal Care", value: "personal-care" },
+    { key: "Personal Care", value: "personal care" },
     { key: "Pets", value: "pets" },
     { key: "Refund", value: "refund"},
     { key: "Shopping", value: "shopping" },

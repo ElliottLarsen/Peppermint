@@ -54,8 +54,10 @@ const GetAccounts = () => {
         <div class="page-title">
             <h2>Accounts</h2>
         </div>
+        <div class="account-table">
         <div>
         <i class="add-button" title="Add New Account"><MdAddCircleOutline onClick={() => navigate('/accounts/add_account')} /></i>
+        </div>
         <div>
             <table>
                 <thead>
