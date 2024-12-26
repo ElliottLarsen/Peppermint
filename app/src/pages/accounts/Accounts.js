@@ -82,7 +82,6 @@ const GetAccounts = () => {
                 ))}
                 </tbody>
             </table>
-        
         </div>
         </div>
         </>

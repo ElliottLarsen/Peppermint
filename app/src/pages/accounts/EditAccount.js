@@ -91,9 +91,6 @@ const EditAccount = () => {
                     <input type='text' name='institution' value={formData.institution} id='institution'
                     onChange={handleChange} required />
 
-                    {/* <label htmlFor='account_type' className='required'>Account type: </label>
-                    <input type='text' name='account_type' value={formData.account_type} id='account_type'
-                    onChange={handleChange} required /> */}
 
                     <label htmlFor='account_type' className='required'>Account type: </label>
                     <select name='account_type' id='account_type' value={selectedType} onChange={handleChange}>
