@@ -23,6 +23,8 @@ def create_transaction(
     db_transaction = Transaction(
         id=str(uuid.uuid4()),
         transaction_date=transaction_create.transaction_date,
+        transaction_description=transaction_create.transaction_description,
+        transaction_category=transaction_create.transaction_category,
         transaction_amount=transaction_create.transaction_amount,
         account_id=account.id,
         account=account,
@@ -58,6 +60,8 @@ def update_transaction(
     # remove the old amount from the current balance by negating the sign
     account_balance_update(db, account, (old_amount * -1))
     transaction.transaction_date = transaction_update.transaction_date
+    transaction.transaction_description = transaction_update.transaction_description
+    transaction.transaction_category = transaction_update.transaction_category
     transaction.transaction_amount = transaction_update.transaction_amount
 
     account_balance_update(db, account, transaction_update.transaction_amount)

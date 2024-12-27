@@ -72,6 +72,12 @@ footer {
     margin:0 5%;
 }
 
+.account-table {
+    display: flex;
+    flex: wrap;
+    justify-content: center;
+}
+
 /* Form Styling */
 
 form {
@@ -102,6 +108,15 @@ label {
     padding: 0.5%;
 }
 
+
+select { border: 1.5px solid black;
+    border-radius: 5px;
+    padding: 0.5;
+    font-size:110%;
+    min-height:24px;
+    width: 350px;}
+
+
 input {
     border: 1.5px solid black;
     border-radius: 5px;
@@ -113,7 +128,6 @@ input {
 /* Table */
 
 table {
-    margin-left: 2%;
     min-width: auto;
     padding: 1%;
 }

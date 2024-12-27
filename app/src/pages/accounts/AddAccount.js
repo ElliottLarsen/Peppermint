@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { accountCategories } from '../../components/AccountCategories';
 
 export default function AddAccount() {
     const [addNewAccount, setNewAccount] = useState({
@@ -53,8 +54,14 @@ export default function AddAccount() {
                     onChange={handleAccountChange} required />
 
                     <label htmlFor='account_type' className='required'>Account type: </label>
-                    <input type='text' name='account_type' placeholder='account type' id='account_type'
-                    onChange={handleAccountChange} required />
+                    <select name='account_type' id='account_type' onChange={handleAccountChange}>
+                        <option value="" selected></option>
+                        { accountCategories.map((category) => (
+                            <option key={ category.value } value={ category.value }>
+                                { category.key }
+                            </option>
+                    ))}
+                    </select>
 
                     <label htmlFor='current_balance' className='required'>Current balance</label>
                     <input type="number" min="0" step="0.01" name="current_balance" placeholder='0.00' id='current_balance'
@@ -66,5 +73,4 @@ export default function AddAccount() {
         </div>
         </>
     )
-
-}
+};

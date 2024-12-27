@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import { accountCategories } from '../../components/AccountCategories';
 
 const EditAccount = () => {
     const [accountData, setAccountData] = useState(null);
+    const [selectedType, setSelectedType] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [formData, setFormData] = useState({
@@ -26,6 +28,7 @@ const EditAccount = () => {
                     }
                 });
                 setAccountData(response.data);
+                setSelectedType(response.data.account_type);
                 setFormData({
                     institution: response.data.institution,
                     account_type: response.data.account_type,
@@ -88,12 +91,19 @@ const EditAccount = () => {
                     <input type='text' name='institution' value={formData.institution} id='institution'
                     onChange={handleChange} required />
 
+
                     <label htmlFor='account_type' className='required'>Account type: </label>
-                    <input type='text' name='account_type' value={formData.account_type} id='account_type'
-                    onChange={handleChange} required />
+                    <select name='account_type' id='account_type' value={selectedType} onChange={handleChange}>
+                        <option value="" selected></option>
+                        { accountCategories.map((category) => (
+                            <option key={ category.value } value={ category.value }>
+                                { category.key }
+                            </option>
+                    ))}
+                    </select>
 
                     <label htmlFor='current_balance' className='required'>Current balance</label>
-                    <input type="number" min="0" step="0.01" name="current_balance" value={formData.current_balance} id='current_balance'
+                    <input type="number" step="0.01" name="current_balance" value={formData.current_balance} id='current_balance'
                     onChange={handleChange} required/>
                     
                     <button type="submit">Add</button>

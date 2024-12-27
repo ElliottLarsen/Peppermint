@@ -55,6 +55,8 @@ class Transaction(Base):
     __tablename__ = "transaction"
     id = Column(String, primary_key=True)
     transaction_date = Column(DateTime, nullable=False)
+    transaction_description = Column(String, unique=False, nullable=True)
+    transaction_category = Column(String, unique=False, nullable=True)
     transaction_amount = Column(Float, unique=False, nullable=False)
     account_id = Column(String, ForeignKey("account.id"))
     account = relationship("Account", backref="transaction")
