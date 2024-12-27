@@ -35,13 +35,16 @@ const ViewAccounts = () => {
     return (
         <>
         <div>
-            <ul>
+            <div class="account-col">
                 {accounts.map(account => (
-                    <li key={account.id}>
-                        <p>{account.institution} <strong><FormatCurrency amount={account.current_balance}/></strong></p>
-                    </li>
+                    <div class="acct-box" key={account.id}>
+                        {account.institution}
+                        <div class="curr-balance">
+                        <FormatCurrency amount={account.current_balance}/>
+                        </div> 
+                    </div>
                 ))}
-            </ul>
+            </div>
         </div>
         </>
     )
