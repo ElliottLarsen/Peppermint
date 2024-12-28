@@ -43,6 +43,13 @@ nav a {
     border-bottom: 1px solid gray;
 }
 
+.acct-detail { cursor: pointer;}
+.acct-detail:hover {
+    font-size: calc(1.1rem);
+    color:green;
+    font-weight: 700;
+}
+
 .curr-balance {
     font-weight: 700;
     display: flex;

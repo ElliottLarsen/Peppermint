@@ -38,7 +38,7 @@ const ViewAccounts = () => {
             <div class="account-col">
                 {accounts.map(account => (
                     <div class="acct-box" key={account.id}>
-                        {account.institution}
+                        <div class="acct-detail" title="Account Details" onClick={() => navigate(`/accounts/${account.id}`)}>{account.institution}</div>
                         <div class="curr-balance">
                         <FormatCurrency amount={account.current_balance}/>
                         </div> 
