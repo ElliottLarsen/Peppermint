@@ -60,3 +60,16 @@ class Transaction(Base):
     transaction_amount = Column(Float, unique=False, nullable=False)
     account_id = Column(String, ForeignKey("account.id"))
     account = relationship("Account", backref="transaction")
+
+
+class Budget(Base):
+    """
+    Budget table in DB
+    """
+
+    __tablename__ = "budget"
+    id = Column(String, primary_key=True)
+    budget_category = Column(String, unique=False, nullable=False)
+    budget_amount = Column(Float, unique=False, nullable=False)
+    user_id = Column(String, ForeignKey("site_user.id"))
+    user = relationship("User", backref="budget")
