@@ -25,7 +25,7 @@ export default function Login({ setIsLoggedIn }) {
             .then((res) => {
                 localStorage.setItem("token", res.data.access_token);
                 setIsLoggedIn(true);
-                navigateTo("/");
+                navigateTo("/home");
             })
             .catch((e) => {
                 console.error("Login error", e.response);

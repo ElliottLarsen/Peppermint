@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'
-import { MdOutlineEdit } from "react-icons/md";
+import ViewAccounts from '../../components/ViewAccounts';
 
-const Profile = () => {
-    const [userData, setUserData] = useState(null);
+const LandingPage = () => {
+    const [username, setUsername] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const navigate = useNavigate();
-    
     useEffect(() => {
-        const fetchUserData = async () => {
+        const fetchUserName = async () => {
             try {
                 const token = localStorage.getItem('token');
                 const response = await axios.get('http://127.0.0.1:8000/peppermint/user/', {
@@ -19,14 +16,14 @@ const Profile = () => {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                setUserData(response.data);
+                setUsername(response.data.username);
                 setLoading(false);
             } catch (error) {
                 setError(error.message);
                 setLoading(false);
             }
         };
-        fetchUserData();
+        fetchUserName();
     }, []);
 
     if (loading) {
@@ -37,26 +34,23 @@ const Profile = () => {
         return <div><p>Error: {error}</p></div>;
     }
 
-    if (!userData) {
+    if (!username) {
         return <div><p>No user info available.</p></div>;
     }
 
+
     return (
-            <>
-            <div class="page-title">
-                <h2>User Profile</h2>
+        <>
+        <div class="page-title">
+            <h2>Welcome back, {username}!</h2>
+        </div>
+        <div>
+            <div class='account-card'>
+                <ViewAccounts />
             </div>
-            <div class="user-landing">
-            <div class="profile">
-                {/* create table? */}
-                <p>Username: {userData.username}</p>
-                <p>Name: {userData.first_name} {userData.last_name}</p>
-                <p>Email: {userData.email}</p>
-                <i class="edit-button" alt="Edit User"><MdOutlineEdit onClick={() => navigate('/user/edit')} /></i>
-            </div>
-            </div>
-            </>
-        )
+        </div>
+        </>
+    )
 };
 
-export default Profile;
+export default LandingPage;

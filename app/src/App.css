@@ -30,8 +30,30 @@ nav a {
 .page-title { padding: 2%;}
 
 .account-card {
+    max-width: 200px;
     border: 1px solid black;
     padding: 1%;
+}
+
+.acct-box {
+    display: flex;
+    flex-direction: column;
+    margin: 1%;
+    padding: 1%;
+    border-bottom: 1px solid gray;
+}
+
+.acct-detail { cursor: pointer;}
+.acct-detail:hover {
+    font-size: calc(1.1rem);
+    color:green;
+    font-weight: 700;
+}
+
+.curr-balance {
+    font-weight: 700;
+    display: flex;
+    justify-content: end;
 }
 
 .user-landing {

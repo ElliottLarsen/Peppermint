@@ -101,7 +101,7 @@ const GetAllTransactions = () => {
     return (
         <>
         <div class="page-title">
-            <h2>Transactions</h2>
+            <h2>All Transactions</h2>
         </div>
         <div class='account-table'>
         <div>
