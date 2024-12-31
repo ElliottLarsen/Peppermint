@@ -44,9 +44,11 @@ const LandingPage = () => {
         <div class="page-title">
             <h2>Welcome back, {username}!</h2>
         </div>
-        <div>
+        <div class="user-landing">
             <div class='account-card'>
                 <ViewAccounts />
+            </div>
+            <div class='expenses-card'>
             </div>
         </div>
         </>

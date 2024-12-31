@@ -30,8 +30,9 @@ nav a {
 .page-title { padding: 2%;}
 
 .account-card {
-    max-width: 200px;
-    border: 1px solid black;
+    min-width: 175px;
+    border: 2px solid black;
+    border-radius: 5px;
     padding: 1%;
 }
 
@@ -44,6 +45,7 @@ nav a {
 }
 
 .acct-detail { cursor: pointer;}
+
 .acct-detail:hover {
     font-size: calc(1.1rem);
     color:green;
@@ -56,8 +58,17 @@ nav a {
     justify-content: end;
 }
 
+.expenses-card {
+    min-width: 650px;
+    border: 2px solid green;
+    border-radius: 5px;
+    padding: 1%;
+
+}
+
 .user-landing {
     display: flex;
+    justify-content: space-evenly;
 }
 
 footer {
@@ -76,14 +87,14 @@ footer {
 }
 
 .edit-button {
-    font-size: 26px;
+    font-size: 20px;
     font-weight: 700;
     color: blue;
     cursor: pointer;
 }
 
 .delete-button {
-    font-size: 26px;
+    font-size: 20px;
     font-weight: 700;
     color: red;
     cursor: pointer;
@@ -99,6 +110,8 @@ footer {
     flex: wrap;
     justify-content: center;
 }
+  
+.account-table tbody { font-size: 0.85rem;} 
 
 /* Form Styling */
 
@@ -154,10 +167,13 @@ table {
     padding: 1%;
 }
 
+tobdy tr {border-bottom: 1px solid gray;}
+
 tr td {
     text-align: center;
     padding: 1%;
     margin: 1% 2%;
+    
 }
 
 tr th { min-width: 100px;}
