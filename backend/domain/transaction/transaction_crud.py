@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 from domain.transaction.transaction_schema import (
     TransactionCreate,
     TransactionUpdate,
@@ -6,6 +7,7 @@ from domain.transaction.transaction_schema import (
 from domain.account.account_crud import (
     account_balance_update,
     get_account_by_id,
+    get_user_accounts,
 )
 from models import Transaction
 from starlette import status
@@ -109,7 +111,9 @@ def get_account_transactions_all(
     return transactions
 
 
-def get_account_transaction_by_id(db: Session, transaction_id: str) -> Transaction | None:
+def get_account_transaction_by_id(
+    db: Session, transaction_id: str
+) -> Transaction | None:
     """
     returns transaction from given transaction id
     """
@@ -131,3 +135,29 @@ def valid_transaction(db: Session, account_id: str, transaction_id: str) -> bool
     if transaction_id not in transaction_id_set:
         return False
     return True
+
+
+def get_all_transactions(db: Session, user_id: str):
+    """
+    returns all transactions for a user
+    """
+    transactions = []
+
+    accounts = get_user_accounts(db, user_id)
+
+    for account in accounts:
+        account_transactions = get_account_transactions_all(db, account.id)
+        for item in account_transactions:
+            transactions.append(item)
+
+    if transactions:
+        return sort_transactions_date(transactions)
+    return transactions
+
+
+def sort_transactions_date(transactions: list):
+    """
+    sort transactions by date descending
+    """
+
+    return sorted(transactions, key=lambda x: x["transaction_date"])
