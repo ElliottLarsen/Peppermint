@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { accountCategories } from '../../components/AccountCategories';
+import { accountCategories } from '../../app_utilities/AccountCategories';
 
 export default function AddAccount() {
     const [addNewAccount, setNewAccount] = useState({

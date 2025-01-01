@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MdOutlineEdit, MdDeleteOutline } from "react-icons/md";
-import FormatCurrency from './FormatCurrency';
-import FormatDate from './FormatDate';
+import FormatCurrency from '../app_utilities/FormatCurrency';
+import FormatDate from '../app_utilities/FormatDate';
 
 const ViewAccountDetail = () => {
     const { accountId } = useParams();

@@ -1,5 +1,3 @@
-import React from 'react';
-
 const FormatCurrency = ({ amount }) => {
     const displayCurrency = (value) => {
         return new Intl.NumberFormat("en-US", {

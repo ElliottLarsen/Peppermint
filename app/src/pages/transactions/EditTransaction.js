@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { categories } from '../../components/TransactionCategories';
+import { categories } from '../../app_utilities/TransactionCategories';
 import { adjustTransactionAmount } from '../../components/AdjustTransactionAmount';
 
 export default function EditTransaction() {

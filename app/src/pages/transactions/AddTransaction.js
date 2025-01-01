@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { adjustTransactionAmount } from '../../components/AdjustTransactionAmount';
-import { categories } from '../../components/TransactionCategories';
+import { categories } from '../../app_utilities/TransactionCategories';
 
 export default function AddTransaction() {
     const [accountOption, setAccountOption] = useState([]);

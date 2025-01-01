@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { categories } from '../../components/TransactionCategories';
+import { categories } from '../../app_utilities/TransactionCategories';
 
 export default function AddBudget() {
     const [addNewBudget, setNewBudget] = useState({

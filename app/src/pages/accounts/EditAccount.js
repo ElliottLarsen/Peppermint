@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { accountCategories } from '../../components/AccountCategories';
+import { accountCategories } from '../../app_utilities/AccountCategories';
 
 const EditAccount = () => {
     const [accountData, setAccountData] = useState(null);
@@ -106,7 +106,7 @@ const EditAccount = () => {
                     <input type="number" step="0.01" name="current_balance" value={formData.current_balance} id='current_balance'
                     onChange={handleChange} required/>
                     
-                    <button type="submit">Add</button>
+                    <button type="submit">Save</button>
                 </fieldset>
             </form>
         </div>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
 import { MdOutlineEdit, MdAddCircleOutline, MdDeleteOutline } from "react-icons/md";
-import FormatCurrency from '../../components/FormatCurrency';
+import  FormatCurrency  from '../../app_utilities/FormatCurrency';
 import { useState, useEffect } from 'react';
 
 const GetBudgets = () => {
@@ -15,6 +15,10 @@ const GetBudgets = () => {
     useEffect(() => {
         fetchBudgets();
     }, []);
+
+    // useEffect(() => {
+    //     fetchAllTransactions();
+    // }, [accounts]);
 
     const fetchBudgets = async () => {
         try {
@@ -32,10 +36,6 @@ const GetBudgets = () => {
             }
         }
     };
-
-    // if (!budgets) {
-    //     return <div><p>No budget info available.</p></div>;
-    // }
 
     const fetchAccounts = async () => {
         try {
@@ -82,6 +82,7 @@ const GetBudgets = () => {
             const transactionArrays = await Promise.all(transactionPromises);
     
             const allTransactions = transactionArrays.flat();
+            console.log(allTransactions);
             setTransactions(allTransactions);
         } catch (error) {
             console.error('Error fetching transactions:', error);        
