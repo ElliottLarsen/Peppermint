@@ -3,29 +3,30 @@ import { useNavigate } from 'react-router-dom'
 import { MdOutlineEdit, MdAddCircleOutline, MdDeleteOutline } from "react-icons/md";
 import  FormatCurrency  from '../../app_utilities/FormatCurrency';
 import { useState, useEffect } from 'react';
+import { handleError } from '../../app_utilities/HandleError';
 
 const GetBudgets = () => {
     const navigate = useNavigate();
-
+    const getToken = () => localStorage.getItem('token');
     const [budgets, setBudgets] = useState(null);
     const [currentBalance, setCurrentBalance] = useState();
-    const [accounts, setAccounts] = useState(null);
     const [transactions, setTransactions] = useState([]);
 
     useEffect(() => {
         fetchBudgets();
     }, []);
 
-    // useEffect(() => {
-    //     fetchAllTransactions();
-    // }, [accounts]);
+    useEffect(() => {
+        fetchAllTransactions();
+    }, []);
+
 
     const fetchBudgets = async () => {
         try {
-            const token = localStorage.getItem('token');
+           
             const response = await axios.get('http://127.0.0.1:8000/peppermint/budget/my_budgets', {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${getToken()}`
                 }
             });
             setBudgets(response.data);
@@ -37,81 +38,43 @@ const GetBudgets = () => {
         }
     };
 
-    const fetchAccounts = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://127.0.0.1:8000/peppermint/account/my_accounts', {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            setAccounts(response.data);
-        } catch (error) {
-            console.error('Error retrieving accounts.', error);
-            if (error.response.status === 401) {
-                navigate('/login');
-            }
-        }
-    };
-
-    const getAccountIds = () => accounts.map((account) => account.id);
-
-    const fetchAccountTransactions =  async (account_id) => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`http://127.0.0.1:8000/peppermint/account/${account_id}/transactions`, {
-                    headers: {
-                         Authorization: `Bearer ${token}`
-                    }
-                });
-            return response.data || [];
-            
-        } catch (error) {
-            console.error('Error retrieving accounts.', error);
-            if (error.response.status === 401) {
-                navigate('/login');
-            return [];
-            }
-        }
-    };
 
     const fetchAllTransactions = async () => {
         try {
-            const accountIds = getAccountIds();
-            const transactionPromises = accountIds.map(fetchAccountTransactions);
-            const transactionArrays = await Promise.all(transactionPromises);
-    
-            const allTransactions = transactionArrays.flat();
-            console.log(allTransactions);
-            setTransactions(allTransactions);
-        } catch (error) {
-            console.error('Error fetching transactions:', error);        
-        }
-  
-    };
-
-    const fetchCurrentBalance = async (budgetCategory) => {
-        try {
-            if (!transactions.length) {
-                await fetchAllTransactions();
+            const response = await axios.get('http://127.0.0.1:8000/peppermint/account/all_transactions', {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`
+                }
+            });
+            const data = response.data
+            console.log("data:", response.data)
+            if (data.length === 0) {
+                alert('No Transactions available at this time');
+                setTransactions([]);
+            } else {
+                const flattenedTransactions = data.flat()
+                const sortedTransactions = flattenedTransactions.sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date));
+                setTransactions(sortedTransactions);
             }
-
-            const filteredTransactions = transactions.filter(
-                (transaction) => transaction.transaction_category === budgetCategory
-            ); 
-            const balance = filteredTransactions.reduce((sum, transaction) => sum + transaction.transaction_amount, 0);           
-            setCurrentBalance(balance);
         } catch (error) {
-            console.error('Error calculating balance:', error);
+            handleError(error, navigate);
         }
+    }
+
+    const calculateCurrentBalance = async (budgetCategory) => {
+        const filteredTransactions = transactions.filter(
+            (transaction) => transaction.transaction_category === budgetCategory
+        ); 
+        const balance = filteredTransactions.reduce((sum, transaction) => sum + transaction.transaction_amount, 0);           
+        return balance;
+
     };
 
     const handleDeleteBudget = async (id) => {
         try {
-            const token = localStorage.getItem('token');
             await axios.delete(`http://127.0.0.1:8000/peppermint/budget/${id}`, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${getToken()}`
                 }
             });
             fetchBudgets();
@@ -147,7 +110,7 @@ const GetBudgets = () => {
                 {budgets.map(budget => (
                     <tr key={budget.id}>
                         <td>{budget.budget_category}</td>
-                        <td>{fetchCurrentBalance(budget.budget_category)}</td>
+                        <td>0</td>
                         <td><FormatCurrency amount={budget.budget_amount}/></td>
                         <td><i class="edit-button" title="Edit Budget"><MdOutlineEdit 
                             onClick={() => navigate(`/budgets/edit_budgett/${budget.id}`)} /></i>
