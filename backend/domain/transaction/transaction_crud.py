@@ -7,9 +7,9 @@ from domain.transaction.transaction_schema import (
 from domain.account.account_crud import (
     account_balance_update,
     get_account_by_id,
-    get_user_accounts,
+    get_all_accounts_by_user_id,
 )
-from models import Transaction
+from models import Transaction, User
 from starlette import status
 from fastapi import HTTPException
 import uuid
@@ -143,15 +143,13 @@ def get_all_transactions(db: Session, user_id: str):
     """
     transactions = []
 
-    accounts = get_user_accounts(db, user_id)
+    accounts = get_all_accounts_by_user_id(db, user_id)
 
     for account in accounts:
         account_transactions = get_account_transactions_all(db, account.id)
-        for item in account_transactions:
-            transactions.append(item)
-
-    if transactions:
-        return sort_transactions_date(transactions)
+        if account_transactions:
+            transactions.append(account_transactions)
+    
     return transactions
 
 
@@ -160,4 +158,4 @@ def sort_transactions_date(transactions: list):
     sort transactions by date descending
     """
 
-    return sorted(transactions, key=lambda x: x["transaction_date"])
+    return sorted(transactions, key=lambda x: x[1])

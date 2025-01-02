@@ -15,6 +15,7 @@ from domain.user.user_crud import (
 )
 from domain.transaction.transaction_crud import (
     get_account_transactions_all,
+    get_all_transactions,
 )
 from domain.account.account_schema import (
     AccountCreate,
@@ -61,6 +62,15 @@ def account_get(
     """
     validate_user(db, current_user)
     return get_user_accounts(db, current_user)
+
+
+@router.get("/all_transactions")
+def account_get_all_transactions(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    validate_user(db, current_user)
+    return get_all_transactions(db, current_user.id)
 
 
 @router.get("/{id}")
