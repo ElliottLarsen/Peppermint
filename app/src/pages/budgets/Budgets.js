@@ -11,14 +11,9 @@ const GetBudgets = () => {
 
     const [budgets, setBudgets] = useState(null);
     const [currentBalances, setCurrentBalance] = useState([]);
-    const [transactions, setTransactions] = useState([]);
 
     useEffect(() => {
         fetchBudgets();
-    }, []);
-
-    useEffect(() => {
-        fetchAllTransactions();
     }, []);
 
     useEffect(() => {
@@ -37,28 +32,6 @@ const GetBudgets = () => {
             handleError(error, navigate);
         }
     };
-
-    const fetchAllTransactions = async () => {
-        try {
-            const response = await axios.get('http://127.0.0.1:8000/peppermint/account/all_transactions', {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            const data = response.data
-
-            if (data.length === 0) {
-                alert('No Transactions available at this time');
-                setTransactions([]);
-            } else {
-                const flattenedTransactions = data.flat()
-                const sortedTransactions = flattenedTransactions.sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date));
-                setTransactions(sortedTransactions);
-            }
-        } catch (error) {
-            handleError(error, navigate);
-        }
-    }
 
     const fetchCurrentBalances = async () => {
         try {
