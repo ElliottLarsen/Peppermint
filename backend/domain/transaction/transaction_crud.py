@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import desc
+from datetime import datetime, timedelta
 from domain.transaction.transaction_schema import (
     TransactionCreate,
     TransactionUpdate,
@@ -126,7 +126,7 @@ def valid_transaction(db: Session, account_id: str, transaction_id: str) -> bool
     """
 
     account_transactions = get_account_transactions_all(db, account_id)
-    # Debug this. account_transactions might be a list of transactions.
+
     transaction_id_set = set()
 
     for transaction in account_transactions:
@@ -154,17 +154,49 @@ def get_all_transactions(db: Session, user_id: str):
     return transactions
 
 
+def get_account_transactions_by_month(
+    db: Session, account_id: str, year: int, month: int
+):
+    year, month = year, month
+
+    transactions = (
+        db.query(Transaction)
+        .filter(
+            Transaction.account_id == account_id,
+            Transaction.timestamp.year == year,
+            Transaction.timestamp.month == month,
+        )
+        .all()
+    )
+
+    return transactions
+
+
+def get_all_transactions_by_month(db: Session, user_id: str, year: int, month: int):
+    monthly_transactions = []
+
+    accounts = get_all_accounts_by_user_id(db, user_id)
+
+    for account in accounts:
+        current_month = get_account_transactions_by_month(db, account.id, year, month)
+        if current_month:
+            for item in current_month:
+                monthly_transactions.append(item)
+
+    return monthly_transactions
+
+
 def sort_transactions_date(transactions: list):
     """
     sort transactions by date descending
     """
 
-    return sorted(transactions, key=lambda x: x[1])
+    return sorted(transactions, key=lambda x: x["transaction_date"])
 
 
 def get_transaction_balances_by_category(transactions):
     """
-    return transactions balances grouped by gategory
+    return transactions categories' balances
     """
     category_balances = {
         "auto-transport": 0,
