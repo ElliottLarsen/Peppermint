@@ -6,6 +6,7 @@ from domain.budget.budget_schema import (
 from models import User, Budget
 import uuid
 
+used_budgets = set()
 
 def create_budget(
     db: Session,

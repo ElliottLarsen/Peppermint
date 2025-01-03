@@ -145,7 +145,7 @@ def test_get_current_balances(client, test_user):
     account = account_response.json()
 
     transaction_data = {
-        "transaction_date": "2024-09-29T19:51:34.898000",
+        "transaction_date": "2025-01-05T19:51:34.898000",
         "transaction_description": "Trader Jo",
         "transaction_category": "groceries",
         "transaction_amount": 100.0,
@@ -157,15 +157,14 @@ def test_get_current_balances(client, test_user):
         "/peppermint/budget/current_balances",
         headers={"Authorization": f"Bearer {access_token}"},
     )
-    
+
     assert response.status_code == 200
-    assert response.json()['groceries'] == 100.0
+    assert response.json()["groceries"] == 100.0
 
     client.delete(
         f"/peppermint/account/{account['id']}",
         headers={"Authorization": f"Bearer {access_token}"},
     )
-
 
 
 #  -------------------------------------------------------------------

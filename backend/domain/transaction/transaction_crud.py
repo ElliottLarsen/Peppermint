@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import extract
 from datetime import datetime, timedelta
 from domain.transaction.transaction_schema import (
     TransactionCreate,
@@ -160,13 +161,11 @@ def get_account_transactions_by_month(
     year, month = year, month
 
     transactions = (
-        db.query(Transaction)
-        .filter(
+        db.query(Transaction).filter(
             Transaction.account_id == account_id,
-            Transaction.timestamp.year == year,
-            Transaction.timestamp.month == month,
-        )
-        .all()
+            extract('year', Transaction.transaction_date == year),
+            extract('month', Transaction.transaction_date == month)
+        ).all()
     )
 
     return transactions

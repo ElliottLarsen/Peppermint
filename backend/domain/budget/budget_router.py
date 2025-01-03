@@ -3,12 +3,14 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from starlette import status
 from database import get_db
+from datetime import datetime, timedelta
 from domain.budget.budget_crud import (
     create_budget,
     update_budget,
     remove_budget,
     get_budget_by_id,
     get_user_budgets,
+    validate_budget,
 )
 from domain.user.user_crud import (
     validate_user,
@@ -22,6 +24,7 @@ from domain.budget.budget_schema import (
 from domain.transaction.transaction_crud import (
     get_all_transactions,
     get_transaction_balances_by_category,
+    get_all_transactions_by_month,
 )
 
 from models import (
@@ -43,6 +46,10 @@ def budget_create(
     Create budget
     """
     # validate_user(db, current_user)
+    validate = validate_budget(budget_create.budget_category)
+    if validate:
+        return
+    
     new_budget = create_budget(db, budget_create=budget_create, user=current_user)
 
     return BudgetResponse(
@@ -73,7 +80,10 @@ def get_current_balance(
     """
     return current balances
     """
-    transactions = get_all_transactions(db, current_user.id)
+    # transactions = get_all_transactions(db, current_user.id)
+    today = datetime.today()
+    year, month = today.year, today.month
+    transactions = get_all_transactions_by_month(db, current_user.id, year, month)
     return get_transaction_balances_by_category(transactions)
 
 
@@ -98,6 +108,9 @@ def budget_update(
     update budget by id
     """
     # validate_user(current_user)
+    validate = validate_budget(budget_update.budget_category)
+    if validate:
+        return
     budget = get_budget_by_id(db, id)
     return update_budget(db, budget_update, budget)
 

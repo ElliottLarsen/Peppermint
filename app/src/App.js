@@ -10,6 +10,7 @@ import EditAccount from './pages/accounts/EditAccount';
 import ViewAccountDetail from './components/AccountDetail';
 import GetBudgets from './pages/budgets/Budgets';
 import AddBudget from './pages/budgets/AddBudget';
+import EditBudget from './pages/budgets/EditBudget';
 import GetAllTransactions from './pages/transactions/Transactions';
 import AddTransaction from './pages/transactions/AddTransaction';
 import EditTransaction from './pages/transactions/EditTransaction';
@@ -66,6 +67,7 @@ function App() {
             <Route path="/accounts/edit_account/:id" element={<EditAccount />} />
             <Route path="/budgets" element={<GetBudgets />} />
             <Route path="/budgets/add_budget" element={<AddBudget />} />
+            <Route path="/budgets/edit_budget/:budgetId" element={<EditBudget />} />
             <Route path="/transactions" element={<GetAllTransactions />} />
             <Route path="/transactions/add_transaction/" element={<AddTransaction />} />
             <Route path="/transactions/edit_transaction/:accountId/:transactionId" element={<EditTransaction />} />

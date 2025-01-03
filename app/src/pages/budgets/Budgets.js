@@ -90,7 +90,7 @@ const GetBudgets = () => {
                         <td><FormatCurrency amount={currentBalances[budget.budget_category]}/></td>
                         <td><FormatCurrency amount={budget.budget_amount}/></td>
                         <td><i class="edit-button" title="Edit Budget"><MdOutlineEdit 
-                            onClick={() => navigate(`/budgets/edit_budgett/${budget.id}`)} /></i>
+                            onClick={() => navigate(`/budgets/edit_budget/${budget.id}`)} /></i>
                         <i class="delete-button" title="Delete Budget"><MdDeleteOutline 
                             onClick={() => handleDeleteBudget(budget.id)} /></i></td>
                     </tr>
