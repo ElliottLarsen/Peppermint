@@ -6,7 +6,9 @@ from domain.budget.budget_schema import (
 from models import User, Budget
 import uuid
 
-used_budgets = set()
+
+current_budgets = set()
+
 
 def create_budget(
     db: Session,
@@ -79,3 +81,24 @@ def get_user_budgets(
     if not budgets:
         return
     return budgets
+
+
+def validate_budget(category):
+
+    if category in current_budgets:
+        return False
+    return True
+
+
+def add_current_budget(category):
+    current_budgets.add(category)
+
+
+def update_current_budgets(old_category, new_category):
+    current_budgets.add(new_category)
+    current_budgets.remove(old_category)
+
+
+def remove_from_current_budgets(category):
+    if category in current_budgets:
+        current_budgets.remove(category)

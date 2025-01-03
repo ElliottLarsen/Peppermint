@@ -4,6 +4,7 @@ import axios from 'axios';
 import { categories } from '../../app_utilities/TransactionCategories';
 
 export default function AddBudget() {
+    const getToken = () => localStorage.getItem('token');
     const [addNewBudget, setNewBudget] = useState({
         budget_category: '',
         budget_amount: ''
@@ -14,10 +15,10 @@ export default function AddBudget() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            const token = localStorage.getItem('token');
+           
             await axios.post("http://127.0.0.1:8000/peppermint/budget/", addNewBudget, {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${getToken()}`
             }
         });
         setNewBudget({

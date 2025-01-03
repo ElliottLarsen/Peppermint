@@ -3,8 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { adjustTransactionAmount } from '../../components/AdjustTransactionAmount';
 import { categories } from '../../app_utilities/TransactionCategories';
+import { handleError } from '../../app_utilities/HandleError';
 
 export default function AddTransaction() {
+    const getToken = () => localStorage.getItem('token');
+    const navigate = useNavigate();
+
     const [accountOption, setAccountOption] = useState([]);
     const [selectedAccount, setSelectedAccount] = useState("");
     const [addNewTransaction, setNewTransaction] = useState({
@@ -17,18 +21,12 @@ export default function AddTransaction() {
     useEffect(() => {
         fetchAccounts();
     }, []);
-
-    const navigate = useNavigate();
     
-    // will need to fetch account_id and be able to choose which 
-    // account id the transaction goes into
-
     const fetchAccounts = async () => {
         try {
-            const token = localStorage.getItem('token');
             const response = await axios.get("http://127.0.0.1:8000/peppermint/account/my_accounts", {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${getToken()}`
             }
             });
             const accounts = response.data.map((account) => ({
@@ -41,12 +39,7 @@ export default function AddTransaction() {
             ])
             
         } catch (error) {
-            console.error('Error retrieving accounts.', error);
-            if (error.response.status === 401) {
-                navigate('/login');
-            } else {
-                console.error('Error with request: ', error.message);
-            }
+            handleError(error, navigate);
         }
     };
 
@@ -60,11 +53,9 @@ export default function AddTransaction() {
                     addNewTransaction.transaction_amount
                 ),
             };
-
-            const token = localStorage.getItem('token');
             await axios.post(`http://127.0.0.1:8000/peppermint/${selectedAccount}`, adjustedTransaction, {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${getToken()}`
             }
         });
         setNewTransaction({

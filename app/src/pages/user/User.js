@@ -4,19 +4,19 @@ import { useNavigate } from 'react-router-dom'
 import { MdOutlineEdit } from "react-icons/md";
 
 const Profile = () => {
+    const getToken = () => localStorage.getItem('token');
+    const navigate = useNavigate();
+
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const navigate = useNavigate();
-    
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get('http://127.0.0.1:8000/peppermint/user/', {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${getToken()}`
                     }
                 });
                 setUserData(response.data);

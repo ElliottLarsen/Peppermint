@@ -107,7 +107,6 @@ export default function EditBudget() {
                 </fieldset>
             </form>
         </div>
-        
         </>
     )
 

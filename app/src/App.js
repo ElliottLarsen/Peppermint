@@ -78,7 +78,7 @@ function App() {
         </Routes>
         </main>
         <footer>
-            <p>&copy;2024</p>
+            <p>&copy;2025</p>
         </footer>
         </>
     );

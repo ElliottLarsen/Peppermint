@@ -6,8 +6,9 @@ import FormatCurrency from '../../app_utilities/FormatCurrency';
 import { handleError } from '../../app_utilities/HandleError';
 
 const GetAccounts = () => {
+    const getToken = () => localStorage.getItem('token');
     const navigate = useNavigate();
-   
+    
     const [accounts, setAccounts] = useState(null);
 
     useEffect(() => {
@@ -16,10 +17,9 @@ const GetAccounts = () => {
 
     const fetchAccounts = async () => {
         try {
-            const token = localStorage.getItem('token');
             const response = await axios.get('http://127.0.0.1:8000/peppermint/account/my_accounts', {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${getToken()}`
                 }
             });
             setAccounts(response.data);
@@ -34,10 +34,9 @@ const GetAccounts = () => {
 
     const handleDeleteAccount = async (id) => {
         try {
-            const token = localStorage.getItem('token');
             await axios.delete(`http://127.0.0.1:8000/peppermint/account/${id}`, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${getToken()}`
                 }
             });
             fetchAccounts();

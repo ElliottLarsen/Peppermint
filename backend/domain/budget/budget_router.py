@@ -10,6 +10,9 @@ from domain.budget.budget_crud import (
     remove_budget,
     get_budget_by_id,
     get_user_budgets,
+    add_current_budget,
+    remove_from_current_budgets,
+    update_current_budgets,
     validate_budget,
 )
 from domain.user.user_crud import (
@@ -47,8 +50,9 @@ def budget_create(
     """
     # validate_user(db, current_user)
     validate = validate_budget(budget_create.budget_category)
-    if validate:
-        return
+    if not validate:
+        raise Exception
+    add_current_budget(budget_create.budget_category)
     
     new_budget = create_budget(db, budget_create=budget_create, user=current_user)
 
@@ -108,10 +112,16 @@ def budget_update(
     update budget by id
     """
     # validate_user(current_user)
-    validate = validate_budget(budget_update.budget_category)
-    if validate:
-        return
+    
     budget = get_budget_by_id(db, id)
+    old_category = budget.budget_category
+    new_category = budget_update.budget_category
+
+    if old_category != new_category:
+        valid_category = validate_budget(new_category)
+        if not valid_category:
+            raise Exception
+        update_current_budgets(old_category, new_category)
     return update_budget(db, budget_update, budget)
 
 
@@ -126,4 +136,5 @@ def budget_remove(
     """
     # validate_user(current_user)
     budget = get_budget_by_id(db, id)
+    remove_from_current_budgets(budget.budget_category)
     return remove_budget(db, budget)

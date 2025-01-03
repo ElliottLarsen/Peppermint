@@ -9,6 +9,7 @@ import { handleError } from '../../app_utilities/HandleError';
 const GetAllTransactions = () => {
     const navigate = useNavigate();
     const getToken = () => localStorage.getItem('token');
+
     const [transactions, setTransactions] = useState([]);
 
     useEffect(() => {
@@ -23,7 +24,6 @@ const GetAllTransactions = () => {
                 }
             });
             const data = response.data
-            console.log("data:", response.data)
             if (data.length === 0) {
                 alert('No Transactions available at this time');
                 setTransactions([]);
@@ -34,7 +34,7 @@ const GetAllTransactions = () => {
         } catch (error) {
             handleError(error, navigate);
         }
-    }
+    };
 
     const handleDeleteTransaction = async (account_id, id) => {
         try {

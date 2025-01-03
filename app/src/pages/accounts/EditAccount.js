@@ -4,6 +4,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { accountCategories } from '../../app_utilities/AccountCategories';
 
 const EditAccount = () => {
+    const getToken = () => localStorage.getItem('token');
+    const { id } = useParams();
+    const navigate = useNavigate();
+
     const [accountData, setAccountData] = useState(null);
     const [selectedType, setSelectedType] = useState('');
     const [loading, setLoading] = useState(true);
@@ -14,17 +18,12 @@ const EditAccount = () => {
         current_balance: ''
     });
 
-    const { id } = useParams();
-    
-    const navigate = useNavigate();
-
     useEffect(() => {
         const fetchAccountData = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get(`http://127.0.0.1:8000/peppermint/account/${id}`, {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${getToken()}`
                     }
                 });
                 setAccountData(response.data);
@@ -54,10 +53,10 @@ const EditAccount = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            const token = localStorage.getItem('token');
+           
             await axios.put(`http://127.0.0.1:8000/peppermint/account/${id}`, formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${getToken()}`
                 }
             });
             alert('Account updated successfully');
