@@ -211,11 +211,15 @@ def test_get_account_transactions(client, test_user):
 
     transaction_data01 = {
         "transaction_date": "2024-10-09T19:51:34.898000",
+        "transaction_description": "",
+        "transaction_category": "",
         "transaction_amount": 25.0,
     }
 
     transaction_data02 = {
         "transaction_date": "2024-10-09T19:55:35.898000",
+        "transaction_description": "",
+        "transaction_category": "",
         "transaction_amount": 75.0,
     }
 
@@ -232,11 +236,6 @@ def test_get_account_transactions(client, test_user):
     assert all_transaction_resp.status_code == 200
     assert len(all_transaction_resp.json()) == 2
 
-    # I was originally going to delete each transaction, but
-    # since we already have a router for that in transaction_router
-    # and it was causing tests to fail. I removed it and just deleted
-    # the temp account
-
     remove_acct_response = client.delete(
         f"/peppermint/account/{account_id}",
         headers={"Authorization": f"Bearer {access_token}"},
@@ -245,9 +244,80 @@ def test_get_account_transactions(client, test_user):
     assert remove_acct_response.status_code == 204
 
 
+def test_get_all_transactions(client, test_user):
+    access_token = test_setup_login_user(client, test_user)
+    data_account_01 = {
+        "institution": "testbank_01",
+        "account_type": "checking",
+        "current_balance": 0.0,
+    }
+    data_account_02 = {
+        "institution": "testbank_02",
+        "account_type": "checking",
+        "current_balance": 0.0,
+    }
+
+    account_response_01 = client.post(
+        "/peppermint/account/",
+        json=data_account_01,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert account_response_01.status_code == 200
+
+    account_response_02 = client.post(
+        "/peppermint/account/",
+        json=data_account_02,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert account_response_02.status_code == 200
+
+    account_01 = account_response_01.json()
+    account_02 = account_response_02.json()
+
+    account_01_id, account_02_id = account_01["id"], account_02["id"]
+
+    transaction_data01 = {
+        "transaction_date": "2024-10-09T19:51:34.898000",
+        "transaction_description": "",
+        "transaction_category": "",
+        "transaction_amount": 45.0,
+    }
+
+    transaction_data02 = {
+        "transaction_date": "2024-10-09T19:55:35.898000",
+        "transaction_description": "",
+        "transaction_category": "",
+        "transaction_amount": 65.0,
+    }
+
+    client.post(f"/peppermint/{account_01_id}", json=transaction_data01)
+    client.post(f"/peppermint/{account_02_id}", json=transaction_data02)
+
+    all_transactions = client.get(
+        "/peppermint/account/all_transactions",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert all_transactions.status_code == 200
+    assert len(all_transactions.json()) == 2
+
+    client.delete(
+        f"/peppermint/account/{account_01_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    client.delete(
+        f"/peppermint/account/{account_02_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+
 #  -------------------------------------------------------------------
 #  DELETE
 #  -------------------------------------------------------------------
+
 
 def test_account_remove(client, test_user):
     """

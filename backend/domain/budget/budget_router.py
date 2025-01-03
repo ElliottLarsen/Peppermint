@@ -3,12 +3,17 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from starlette import status
 from database import get_db
+from datetime import datetime, timedelta
 from domain.budget.budget_crud import (
     create_budget,
     update_budget,
     remove_budget,
     get_budget_by_id,
     get_user_budgets,
+    add_current_budget,
+    remove_from_current_budgets,
+    update_current_budgets,
+    validate_budget,
 )
 from domain.user.user_crud import (
     validate_user,
@@ -17,6 +22,12 @@ from domain.budget.budget_schema import (
     BudgetCreate,
     BudgetUpdate,
     BudgetResponse,
+)
+
+from domain.transaction.transaction_crud import (
+    get_all_transactions,
+    get_transaction_balances_by_category,
+    get_all_transactions_by_month,
 )
 
 from models import (
@@ -38,6 +49,11 @@ def budget_create(
     Create budget
     """
     # validate_user(db, current_user)
+    validate = validate_budget(budget_create.budget_category)
+    if not validate:
+        raise Exception
+    add_current_budget(budget_create.budget_category)
+    
     new_budget = create_budget(db, budget_create=budget_create, user=current_user)
 
     return BudgetResponse(
@@ -58,6 +74,21 @@ def budget_get(
     """
     # validate_user(current_user)
     return get_user_budgets(db, current_user)
+
+
+@router.get("/current_balances")
+def get_current_balance(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    return current balances
+    """
+    # transactions = get_all_transactions(db, current_user.id)
+    today = datetime.today()
+    year, month = today.year, today.month
+    transactions = get_all_transactions_by_month(db, current_user.id, year, month)
+    return get_transaction_balances_by_category(transactions)
 
 
 @router.get("/{id}")
@@ -81,7 +112,16 @@ def budget_update(
     update budget by id
     """
     # validate_user(current_user)
+    
     budget = get_budget_by_id(db, id)
+    old_category = budget.budget_category
+    new_category = budget_update.budget_category
+
+    if old_category != new_category:
+        valid_category = validate_budget(new_category)
+        if not valid_category:
+            raise Exception
+        update_current_budgets(old_category, new_category)
     return update_budget(db, budget_update, budget)
 
 
@@ -96,4 +136,5 @@ def budget_remove(
     """
     # validate_user(current_user)
     budget = get_budget_by_id(db, id)
+    remove_from_current_budgets(budget.budget_category)
     return remove_budget(db, budget)

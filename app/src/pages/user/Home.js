@@ -3,6 +3,7 @@ import axios from 'axios';
 import ViewAccounts from '../../components/ViewAccounts';
 
 const LandingPage = () => {
+    const getToken = () => localStorage.getItem('token');
     const [username, setUsername] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -10,10 +11,9 @@ const LandingPage = () => {
     useEffect(() => {
         const fetchUserName = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get('http://127.0.0.1:8000/peppermint/user/', {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${getToken()}`
                     }
                 });
                 setUsername(response.data.username);
@@ -44,9 +44,11 @@ const LandingPage = () => {
         <div class="page-title">
             <h2>Welcome back, {username}!</h2>
         </div>
-        <div>
+        <div class="user-landing">
             <div class='account-card'>
                 <ViewAccounts />
+            </div>
+            <div class='expenses-card'>
             </div>
         </div>
         </>

@@ -8,6 +8,9 @@ import GetAccounts from './pages/accounts/Accounts';
 import AddAccount from './pages/accounts/AddAccount';
 import EditAccount from './pages/accounts/EditAccount';
 import ViewAccountDetail from './components/AccountDetail';
+import GetBudgets from './pages/budgets/Budgets';
+import AddBudget from './pages/budgets/AddBudget';
+import EditBudget from './pages/budgets/EditBudget';
 import GetAllTransactions from './pages/transactions/Transactions';
 import AddTransaction from './pages/transactions/AddTransaction';
 import EditTransaction from './pages/transactions/EditTransaction';
@@ -38,6 +41,7 @@ function App() {
                         <Link to="/home">Home</Link>
                         <Link to="/accounts">Accounts</Link>
                         <Link to="/transactions">Transactions</Link>
+                        <Link to="/budgets">Budgets</Link>
                         <Link to='/user'>Profile</Link>
                         <Link to='/logout'>Logout</Link>
                         </>
@@ -61,6 +65,9 @@ function App() {
             <Route path="/accounts/:accountId" element={<ViewAccountDetail/>} />
             <Route path="/accounts/add_account" element={<AddAccount />} />
             <Route path="/accounts/edit_account/:id" element={<EditAccount />} />
+            <Route path="/budgets" element={<GetBudgets />} />
+            <Route path="/budgets/add_budget" element={<AddBudget />} />
+            <Route path="/budgets/edit_budget/:budgetId" element={<EditBudget />} />
             <Route path="/transactions" element={<GetAllTransactions />} />
             <Route path="/transactions/add_transaction/" element={<AddTransaction />} />
             <Route path="/transactions/edit_transaction/:accountId/:transactionId" element={<EditTransaction />} />
@@ -71,7 +78,7 @@ function App() {
         </Routes>
         </main>
         <footer>
-            <p>&copy;2024</p>
+            <p>&copy;2025</p>
         </footer>
         </>
     );

@@ -2,31 +2,29 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
 import { MdOutlineEdit, MdAddCircleOutline, MdDeleteOutline } from "react-icons/md";
-import FormatCurrency from '../../components/FormatCurrency';
+import FormatCurrency from '../../app_utilities/FormatCurrency';
+import { handleError } from '../../app_utilities/HandleError';
 
 const GetAccounts = () => {
+    const getToken = () => localStorage.getItem('token');
     const navigate = useNavigate();
-   
+    
     const [accounts, setAccounts] = useState(null);
 
     useEffect(() => {
         fetchAccounts();
     }, []);
 
-    const fetchAccounts = async() => {
+    const fetchAccounts = async () => {
         try {
-            const token = localStorage.getItem('token');
             const response = await axios.get('http://127.0.0.1:8000/peppermint/account/my_accounts', {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${getToken()}`
                 }
             });
             setAccounts(response.data);
         } catch (error) {
-            console.error('Error retrieving accounts.', error);
-            if (error.response.status === 401) {
-                navigate('/login');
-            }
+            handleError(error, navigate);
         }
     };
 
@@ -36,10 +34,9 @@ const GetAccounts = () => {
 
     const handleDeleteAccount = async (id) => {
         try {
-            const token = localStorage.getItem('token');
             await axios.delete(`http://127.0.0.1:8000/peppermint/account/${id}`, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${getToken()}`
                 }
             });
             fetchAccounts();

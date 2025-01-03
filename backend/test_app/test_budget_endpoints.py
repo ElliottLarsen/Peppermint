@@ -128,6 +128,45 @@ def test_budget_update(client, test_user):
     assert response.json()["budget_amount"] == 133.78
 
 
+def test_get_current_balances(client, test_user):
+    access_token = test_setup_login_user(client, test_user)
+
+    data = {
+        "institution": "new_testbank",
+        "account_type": "checking",
+        "current_balance": 0.0,
+    }
+    account_response = client.post(
+        "/peppermint/account/",
+        json=data,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    account = account_response.json()
+
+    transaction_data = {
+        "transaction_date": "2025-01-05T19:51:34.898000",
+        "transaction_description": "Trader Jo",
+        "transaction_category": "groceries",
+        "transaction_amount": 100.0,
+    }
+
+    client.post(f"/peppermint/{account['id']}", json=transaction_data)
+
+    response = client.get(
+        "/peppermint/budget/current_balances",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["groceries"] == 100.0
+
+    client.delete(
+        f"/peppermint/account/{account['id']}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+
 #  -------------------------------------------------------------------
 #  DELETE
 #  -------------------------------------------------------------------

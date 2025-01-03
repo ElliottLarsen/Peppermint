@@ -1,24 +1,24 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { accountCategories } from '../../components/AccountCategories';
+import { accountCategories } from '../../app_utilities/AccountCategories';
 
 export default function AddAccount() {
+    const getToken = () => localStorage.getItem('token');
+    const navigate = useNavigate();
+
     const [addNewAccount, setNewAccount] = useState({
         institution: '',
         account_type: '',
         current_balance: ''
     })
 
-    const navigate = useNavigate();
-
     const handleAccountSubmit = async (e) => {
         e.preventDefault()
         try {
-            const token = localStorage.getItem('token');
             await axios.post("http://127.0.0.1:8000/peppermint/account/", addNewAccount, {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${getToken()}`
             }
         });
         setNewAccount({

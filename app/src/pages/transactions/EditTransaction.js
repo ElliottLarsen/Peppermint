@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { categories } from '../../components/TransactionCategories';
+import { categories } from '../../app_utilities/TransactionCategories';
 import { adjustTransactionAmount } from '../../components/AdjustTransactionAmount';
 
 export default function EditTransaction() {
+    const navigate = useNavigate();
+    const getToken = () => localStorage.getItem('token');
     const { accountId, transactionId } = useParams();
+
     const [transactionData, setTransactionData] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [loading, setLoading] = useState(true);
@@ -16,18 +19,14 @@ export default function EditTransaction() {
         transaction_category: '',
         transaction_amount: '',
     });
-
-    const navigate = useNavigate();
     
     useEffect(() => {
         const fetchTransactionData = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get(`http://127.0.0.1:8000/peppermint/${accountId}/${transactionId}`, {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${getToken()}`
                     }
-                
             });
 
             const transactionAmount = response.data.transaction_amount;
@@ -76,10 +75,9 @@ export default function EditTransaction() {
                     formData.transaction_amount
                 ),
             };
-            const token = localStorage.getItem('token');
             await axios.put(`http://127.0.0.1:8000/peppermint/${accountId}/${transactionId}`, adjustedFormData, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${getToken()}`
                 }
             });
             alert('Transaction updated successfully');

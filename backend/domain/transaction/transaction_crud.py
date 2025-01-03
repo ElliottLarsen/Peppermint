@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import extract
+from datetime import datetime, timedelta
 from domain.transaction.transaction_schema import (
     TransactionCreate,
     TransactionUpdate,
@@ -6,8 +8,9 @@ from domain.transaction.transaction_schema import (
 from domain.account.account_crud import (
     account_balance_update,
     get_account_by_id,
+    get_all_accounts_by_user_id,
 )
-from models import Transaction
+from models import Transaction, User
 from starlette import status
 from fastapi import HTTPException
 import uuid
@@ -109,7 +112,9 @@ def get_account_transactions_all(
     return transactions
 
 
-def get_account_transaction_by_id(db: Session, transaction_id: str) -> Transaction | None:
+def get_account_transaction_by_id(
+    db: Session, transaction_id: str
+) -> Transaction | None:
     """
     returns transaction from given transaction id
     """
@@ -122,7 +127,7 @@ def valid_transaction(db: Session, account_id: str, transaction_id: str) -> bool
     """
 
     account_transactions = get_account_transactions_all(db, account_id)
-    # Debug this. account_transactions might be a list of transactions.
+
     transaction_id_set = set()
 
     for transaction in account_transactions:
@@ -131,3 +136,88 @@ def valid_transaction(db: Session, account_id: str, transaction_id: str) -> bool
     if transaction_id not in transaction_id_set:
         return False
     return True
+
+
+def get_all_transactions(db: Session, user_id: str):
+    """
+    returns all transactions for a user
+    """
+    transactions = []
+
+    accounts = get_all_accounts_by_user_id(db, user_id)
+
+    for account in accounts:
+        account_transactions = get_account_transactions_all(db, account.id)
+        if account_transactions:
+            for item in account_transactions:
+                transactions.append(item)
+
+    return transactions
+
+
+def get_account_transactions_by_month(
+    db: Session, account_id: str, year: int, month: int
+):
+    year, month = year, month
+
+    transactions = (
+        db.query(Transaction).filter(
+            Transaction.account_id == account_id,
+            extract('year', Transaction.transaction_date == year),
+            extract('month', Transaction.transaction_date == month)
+        ).all()
+    )
+
+    return transactions
+
+
+def get_all_transactions_by_month(db: Session, user_id: str, year: int, month: int):
+    monthly_transactions = []
+
+    accounts = get_all_accounts_by_user_id(db, user_id)
+
+    for account in accounts:
+        current_month = get_account_transactions_by_month(db, account.id, year, month)
+        if current_month:
+            for item in current_month:
+                monthly_transactions.append(item)
+
+    return monthly_transactions
+
+
+def sort_transactions_date(transactions: list):
+    """
+    sort transactions by date descending
+    """
+
+    return sorted(transactions, key=lambda x: x["transaction_date"])
+
+
+def get_transaction_balances_by_category(transactions):
+    """
+    return transactions categories' balances
+    """
+    category_balances = {
+        "auto-transport": 0,
+        "bills-utilities": 0,
+        "credit": 0,
+        "education": 0,
+        "fees-charges": 0,
+        "food-restaurants": 0,
+        "gas": 0,
+        "groceries": 0,
+        "health-fitness": 0,
+        "income": 0,
+        "misc": 0,
+        "mortgage-rent": 0,
+        "personal care": 0,
+        "pets": 0,
+        "refund": 0,
+        "shopping": 0,
+        "transfer": 0,
+    }
+
+    for item in transactions:
+        category_balances[item.transaction_category] += abs(item.transaction_amount)
+
+    return category_balances

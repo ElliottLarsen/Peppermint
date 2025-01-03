@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const User = () => {
+    const navigate = useNavigate();
+    const getToken = () => localStorage.getItem('token');
+
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -14,16 +17,13 @@ const User = () => {
         password1: '', 
         password2: ''
     });
-    
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get('http://127.0.0.1:8000/peppermint/user/', {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${getToken()}`
                     }
                 });
                 setUserData(response.data);
@@ -55,10 +55,9 @@ const User = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
             await axios.put('http://127.0.0.1:8000/peppermint/user/', formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${getToken()}`
                 }
             });
             alert('User account updated succesfully');
