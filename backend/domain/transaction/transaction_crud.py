@@ -148,8 +148,9 @@ def get_all_transactions(db: Session, user_id: str):
     for account in accounts:
         account_transactions = get_account_transactions_all(db, account.id)
         if account_transactions:
-            transactions.append(account_transactions)
-    
+            for item in account_transactions:
+                transactions.append(item)
+
     return transactions
 
 
@@ -159,3 +160,33 @@ def sort_transactions_date(transactions: list):
     """
 
     return sorted(transactions, key=lambda x: x[1])
+
+
+def get_transaction_balances_by_category(transactions):
+    """
+    return transactions balances grouped by gategory
+    """
+    category_balances = {
+        "auto-transport": 0,
+        "bills-utilities": 0,
+        "credit": 0,
+        "education": 0,
+        "fees-charges": 0,
+        "food-restaurants": 0,
+        "gas": 0,
+        "groceries": 0,
+        "health-fitness": 0,
+        "income": 0,
+        "misc": 0,
+        "mortgage-rent": 0,
+        "personal care": 0,
+        "pets": 0,
+        "refund": 0,
+        "shopping": 0,
+        "transfer": 0,
+    }
+
+    for item in transactions:
+        category_balances[item.transaction_category] += abs(item.transaction_amount)
+
+    return category_balances

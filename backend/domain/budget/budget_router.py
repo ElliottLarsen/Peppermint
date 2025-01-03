@@ -19,6 +19,11 @@ from domain.budget.budget_schema import (
     BudgetResponse,
 )
 
+from domain.transaction.transaction_crud import (
+    get_all_transactions,
+    get_transaction_balances_by_category,
+)
+
 from models import (
     User,
 )
@@ -58,6 +63,18 @@ def budget_get(
     """
     # validate_user(current_user)
     return get_user_budgets(db, current_user)
+
+
+@router.get("/current_balances")
+def get_current_balance(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    return current balances
+    """
+    transactions = get_all_transactions(db, current_user.id)
+    return get_transaction_balances_by_category(transactions)
 
 
 @router.get("/{id}")

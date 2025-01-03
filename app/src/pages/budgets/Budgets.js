@@ -8,8 +8,9 @@ import { handleError } from '../../app_utilities/HandleError';
 const GetBudgets = () => {
     const navigate = useNavigate();
     const getToken = () => localStorage.getItem('token');
+
     const [budgets, setBudgets] = useState(null);
-    const [currentBalance, setCurrentBalance] = useState();
+    const [currentBalances, setCurrentBalance] = useState([]);
     const [transactions, setTransactions] = useState([]);
 
     useEffect(() => {
@@ -20,10 +21,12 @@ const GetBudgets = () => {
         fetchAllTransactions();
     }, []);
 
+    useEffect(() => {
+        fetchCurrentBalances();
+    }, []);
 
     const fetchBudgets = async () => {
         try {
-           
             const response = await axios.get('http://127.0.0.1:8000/peppermint/budget/my_budgets', {
                 headers: {
                     Authorization: `Bearer ${getToken()}`
@@ -31,13 +34,9 @@ const GetBudgets = () => {
             });
             setBudgets(response.data);
         } catch (error) {
-            console.error('Error retrieving budgets.', error);
-            if (error.response.status === 401) {
-                navigate('/login');
-            }
+            handleError(error, navigate);
         }
     };
-
 
     const fetchAllTransactions = async () => {
         try {
@@ -47,7 +46,7 @@ const GetBudgets = () => {
                 }
             });
             const data = response.data
-            console.log("data:", response.data)
+
             if (data.length === 0) {
                 alert('No Transactions available at this time');
                 setTransactions([]);
@@ -61,13 +60,18 @@ const GetBudgets = () => {
         }
     }
 
-    const calculateCurrentBalance = async (budgetCategory) => {
-        const filteredTransactions = transactions.filter(
-            (transaction) => transaction.transaction_category === budgetCategory
-        ); 
-        const balance = filteredTransactions.reduce((sum, transaction) => sum + transaction.transaction_amount, 0);           
-        return balance;
-
+    const fetchCurrentBalances = async () => {
+        try {
+            const cbResponse = await axios.get('http://127.0.0.1:8000/peppermint/budget/current_balances', {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`
+                }
+            });
+            console.log(cbResponse.data)
+            setCurrentBalance(cbResponse.data);
+        } catch (error) {
+            handleError(error, navigate);
+        }
     };
 
     const handleDeleteBudget = async (id) => {
@@ -101,7 +105,7 @@ const GetBudgets = () => {
                 <thead>
                     <tr>
                         <th>Category</th>
-                        <th>Balance</th>
+                        <th>Current Balance</th>
                         <th>Amount</th>
                         <th>Actions</th>
                     </tr>
@@ -110,7 +114,7 @@ const GetBudgets = () => {
                 {budgets.map(budget => (
                     <tr key={budget.id}>
                         <td>{budget.budget_category}</td>
-                        <td>0</td>
+                        <td><FormatCurrency amount={currentBalances[budget.budget_category]}/></td>
                         <td><FormatCurrency amount={budget.budget_amount}/></td>
                         <td><i class="edit-button" title="Edit Budget"><MdOutlineEdit 
                             onClick={() => navigate(`/budgets/edit_budgett/${budget.id}`)} /></i>
