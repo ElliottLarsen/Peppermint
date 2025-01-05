@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from starlette import status
+from datetime import datetime, timedelta
 from database import get_db
 from domain.account.account_crud import (
     create_account,
@@ -9,6 +10,7 @@ from domain.account.account_crud import (
     remove_account,
     get_account_by_id,
     get_user_accounts,
+    get_users_accounts_balance,
 )
 from domain.user.user_crud import (
     validate_user,
@@ -16,6 +18,8 @@ from domain.user.user_crud import (
 from domain.transaction.transaction_crud import (
     get_account_transactions_all,
     get_all_transactions,
+    get_expenses_by_month,
+    date_modulo,
 )
 from domain.account.account_schema import (
     AccountCreate,
@@ -71,6 +75,28 @@ def account_get_all_transactions(
 ):
     validate_user(db, current_user)
     return get_all_transactions(db, current_user.id)
+
+
+@router.get("/expenses")
+def account_get_expenses(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    get current month's expenses
+    """
+    today = datetime.today()
+    year, month = today.year, today.month
+    return get_expenses_by_month(db, current_user.id, year, month)
+
+
+@router.get("/total_balances")
+def account_get_total_balances(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    validate_user(db, current_user)
+    return get_users_accounts_balance(db, current_user.id)
 
 
 @router.get("/{id}")

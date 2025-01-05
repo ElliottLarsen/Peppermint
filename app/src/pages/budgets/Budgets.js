@@ -40,7 +40,6 @@ const GetBudgets = () => {
                     Authorization: `Bearer ${getToken()}`
                 }
             });
-            console.log(cbResponse.data)
             setCurrentBalance(cbResponse.data);
         } catch (error) {
             handleError(error, navigate);

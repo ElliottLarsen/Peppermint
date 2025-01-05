@@ -158,14 +158,19 @@ def get_all_transactions(db: Session, user_id: str):
 def get_account_transactions_by_month(
     db: Session, account_id: str, year: int, month: int
 ):
+    """
+    return query for account's transactions by month/year
+    """
     year, month = year, month
 
     transactions = (
-        db.query(Transaction).filter(
+        db.query(Transaction)
+        .filter(
             Transaction.account_id == account_id,
-            extract('year', Transaction.transaction_date == year),
-            extract('month', Transaction.transaction_date == month)
-        ).all()
+            extract("year", Transaction.transaction_date == year),
+            extract("month", Transaction.transaction_date == month),
+        )
+        .all()
     )
 
     return transactions
@@ -221,3 +226,29 @@ def get_transaction_balances_by_category(transactions):
         category_balances[item.transaction_category] += abs(item.transaction_amount)
 
     return category_balances
+
+
+def get_expenses_by_month(db: Session, user_id: str, year: int, month: int):
+    """
+    return expenses by month (no income, credit, transfer)
+    """
+    current_total = 0.0
+    income = {"credit", "income", "transfer"}
+
+    transactions = get_all_transactions_by_month(db, user_id, year, month)
+    for item in transactions:
+        if item.transaction_category not in income:
+            current_total += abs(item.transaction_amount)
+
+    return current_total
+
+
+def date_modulo(year, month):
+    """
+    wrap date for year ends
+    """
+    if month > 12:
+        return (year + 1), 1
+    if month < 1:
+        return (year - 1), 12
+    return year, month
