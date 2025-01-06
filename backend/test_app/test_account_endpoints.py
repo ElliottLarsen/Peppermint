@@ -341,7 +341,7 @@ def test_get_all_transactions(client, test_user):
     account_01_id, account_02_id = account_01["id"], account_02["id"]
 
     transaction_data01 = {
-        "transaction_date": "2024-10-09T19:51:34.898000",
+        "transaction_date": "2024-10-08T19:51:34.898000",
         "transaction_description": "",
         "transaction_category": "",
         "transaction_amount": 45.0,
@@ -452,6 +452,101 @@ def test_get_all_expenses(client, test_user):
         f"/peppermint/account/{account_02_id}",
         headers={"Authorization": f"Bearer {access_token}"},
     )
+
+
+def test_get_last_six_months_expense_totals(client, test_user):
+    access_token = test_setup_login_user(client, test_user)
+    data_account_01 = {
+        "institution": "testbank_01",
+        "account_type": "checking",
+        "current_balance": 0.0,
+    }
+    data_account_02 = {
+        "institution": "testbank_02",
+        "account_type": "checking",
+        "current_balance": 0.0,
+    }
+
+    account_response_01 = client.post(
+        "/peppermint/account/",
+        json=data_account_01,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert account_response_01.status_code == 200
+
+    account_response_02 = client.post(
+        "/peppermint/account/",
+        json=data_account_02,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    assert account_response_02.status_code == 200
+
+    account_01 = account_response_01.json()
+    account_02 = account_response_02.json()
+
+    account_01_id, account_02_id = account_01["id"], account_02["id"]
+
+    transaction_data01 = {
+        "transaction_date": "2025-01-09T19:51:34.898000",
+        "transaction_description": "",
+        "transaction_category": "groceries",
+        "transaction_amount": 45.0,
+    }
+
+    transaction_data02 = {
+        "transaction_date": "2024-12-09T19:55:35.898000",
+        "transaction_description": "",
+        "transaction_category": "pets",
+        "transaction_amount": 65.0,
+    }
+
+    transaction_data03 = {
+        "transaction_date": "2024-11-19T19:55:35.898000",
+        "transaction_description": "",
+        "transaction_category": "mortgage-rent",
+        "transaction_amount": 400.0,
+    }
+
+    transaction_data04 = {
+        "transaction_date": "2024-09-19T19:55:35.898000",
+        "transaction_description": "",
+        "transaction_category": "personal care",
+        "transaction_amount": 500.0,
+    }
+
+    transaction_data05 = {
+        "transaction_date": "2024-08-19T19:55:35.898000",
+        "transaction_description": "",
+        "transaction_category": "mortgage-rent",
+        "transaction_amount": 400.0,
+    }
+
+    client.post(f"/peppermint/{account_01_id}", json=transaction_data01)
+    client.post(f"/peppermint/{account_02_id}", json=transaction_data02)
+    client.post(f"/peppermint/{account_02_id}", json=transaction_data03)
+    client.post(f"/peppermint/{account_01_id}", json=transaction_data04)
+    client.post(f"/peppermint/{account_02_id}", json=transaction_data05)
+
+    expenses_response = client.get(
+        "/peppermint/account/expenses/six_months",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    print(expenses_response.json())
+    assert expenses_response.status_code == 200
+    assert len(expenses_response.json()) == 6
+
+    client.delete(
+        f"/peppermint/account/{account_01_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    client.delete(
+        f"/peppermint/account/{account_02_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
 
 
 #  -------------------------------------------------------------------

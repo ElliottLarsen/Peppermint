@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import extract
-from datetime import datetime, timedelta
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from collections import defaultdict
 from domain.transaction.transaction_schema import (
     TransactionCreate,
     TransactionUpdate,
@@ -167,8 +169,8 @@ def get_account_transactions_by_month(
         db.query(Transaction)
         .filter(
             Transaction.account_id == account_id,
-            extract("year", Transaction.transaction_date == year),
-            extract("month", Transaction.transaction_date == month),
+            extract("year", Transaction.transaction_date) == year,
+            extract("month", Transaction.transaction_date) == month,
         )
         .all()
     )
@@ -195,7 +197,7 @@ def sort_transactions_date(transactions: list):
     sort transactions by date descending
     """
 
-    return sorted(transactions, key=lambda x: x["transaction_date"])
+    return sorted(transactions, key=lambda x: x.transaction_date, reverse=True)
 
 
 def get_transaction_balances_by_category(transactions):
@@ -228,7 +230,7 @@ def get_transaction_balances_by_category(transactions):
     return category_balances
 
 
-def get_expenses_by_month(db: Session, user_id: str, year: int, month: int):
+def get_expenses_total_for_month(db: Session, user_id: str, year: int, month: int):
     """
     return expenses by month (no income, credit, transfer)
     """
@@ -243,12 +245,53 @@ def get_expenses_by_month(db: Session, user_id: str, year: int, month: int):
     return current_total
 
 
-def date_modulo(year, month):
+def get_six_months_total_expenses(
+    db: Session, user_id: str, year: int, month: int, day: int
+):
     """
-    wrap date for year ends
+    return last six months expenses (total value)
     """
-    if month > 12:
-        return (year + 1), 1
-    if month < 1:
-        return (year - 1), 12
-    return year, month
+    income = {"credit", "income", "transfer"}
+    expenses_by_month = defaultdict(float)
+
+    current_date = datetime(year, month, day)
+
+    for i in range(6):
+        date = current_date - relativedelta(months=i)
+        current_year, current_month = date.year, date.month
+
+        total_expenses = 0.0
+        transactions = get_all_transactions_by_month(
+            db, user_id, current_year, current_month
+        )
+
+        for item in transactions:
+            if item.transaction_category not in income:
+                total_expenses += abs(item.transaction_amount)
+        expenses_by_month[f"{current_year}-{current_month:02d}"] = total_expenses
+
+    return expenses_by_month
+
+
+def get_monthly_expenses_by_category(transactions):
+    expense_balances = {
+        "auto-transport": 0,
+        "bills-utilities": 0,
+        "education": 0,
+        "fees-charges": 0,
+        "food-restaurants": 0,
+        "gas": 0,
+        "groceries": 0,
+        "health-fitness": 0,
+        "misc": 0,
+        "mortgage-rent": 0,
+        "personal care": 0,
+        "pets": 0,
+        "refund": 0,
+        "shopping": 0,
+    }
+
+    for item in transactions:
+        expense_balances[item.transaction_category] += abs(item.transaction_amount)
+
+    return expense_balances
