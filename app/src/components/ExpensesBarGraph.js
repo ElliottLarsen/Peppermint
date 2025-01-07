@@ -1,62 +1,85 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { handleError } from '../app_utilities/HandleError';
-import { Chart, CategoryScale, LinearScale, BarController, BarElement, Title, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarController, BarElement, Title, Legend } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 
-Chart.register(LinearScale, CategoryScale, BarController, BarElement, Title, Legend);
+ChartJS.register(LinearScale, CategoryScale, BarController, BarElement, Title, Legend);
 
-const ExpensesBarGraph = ( {expensesData} ) => {
-    const chartRef = useRef(null);
-    const chartInstance = useRef(null);
+const ExpensesBarGraph = () => {
+    const getToken = () => localStorage.getItem('token');
     const navigate = useNavigate();
+    const [expensesData, setExpensesData]= useState({});
+    const [expensesChart, setExpensesChart] = useState(null);
 
     useEffect(() => {
-        if (expensesData && chartRef.current); {
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
+        fetchExpensesData();
+    }, []);
 
-            console.log(expensesData)
-            const labels = Object.keys(expensesData).map(date => {
-                const [year, month] = date.split('-');
-                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                return `${monthNames[parseInt(month, 10) - 1]} ${year}`;
-            });
-            const expenses = Object.values(expensesData);
-    
-            const ctx = document.getElementById('expensesChart').getContext('2d');
-    
-            const expensesChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Last 6 Months Expenses',
-                        data: expenses,
-                        backgroundColor: 'rgba(0,255,0,0.5)',
-                        borderColor: "rgba(0,255,0,1)",
-                        borderWidth: "1"
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
+    useEffect(() => {
+        if (Object.keys(expensesData).length > 0) {
+            createBarGraph();
         }
-        return () => {
-            if (expensesChart) {
-                expensesChart.destroy();
-            }
-        };
-        }, [expensesData]);
+    }, [expensesData]);
 
-        return <canvas ref={ chartRef } id="expensesChart" width='400' height='200' />;
+    
+    const fetchExpensesData = async () => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/peppermint/account/expenses/six_months`, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`
+                }
+            
+            });
+
+            setExpensesData(response.data);
+
+        } catch (error) {
+            handleError(error, navigate);
+        }
+    };
+    const createBarGraph = () => {
+
+        const expenseLabels = Object.keys(expensesData);
+        const expenseTotal = Object.values(expensesData);
+            
+        const chartData = {
+                labels: expenseLabels,
+                datasets: [
+                    {
+                    label: 'Last 6 Months Expenses',
+                    data: expenseTotal,
+                    backgroundColor: 'rgba(0,255,0,0.5)',
+                    borderColor: "black",
+                    borderWidth: "2"
+                    },
+                ],
+            };
+            const chartOptions = {
+                responsive: true,
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true
+                    },
+                },
+            };
+            setExpensesChart({ data: chartData, options: chartOptions });
+        };
+
+    return (
+        <div>
+            { expensesChart ? (
+                <Bar data={ expensesChart.data } options={ expensesChart.options } width='400' height='200' />
+            ) : (<p>Loading...</p>)
+            }
+        </div>
+    );
 };
 
 

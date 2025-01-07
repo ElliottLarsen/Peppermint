@@ -264,11 +264,11 @@ def get_six_months_total_expenses(
         transactions = get_all_transactions_by_month(
             db, user_id, current_year, current_month
         )
-
+        date_key = format_date(current_year, current_month)
         for item in transactions:
             if item.transaction_category not in income:
                 total_expenses += abs(item.transaction_amount)
-        expenses_by_month[f"{current_year}-{current_month:02d}"] = total_expenses
+        expenses_by_month[f"{date_key}"] = total_expenses
 
     return expenses_by_month
 
@@ -295,3 +295,16 @@ def get_monthly_expenses_by_category(transactions):
         expense_balances[item.transaction_category] += abs(item.transaction_amount)
 
     return expense_balances
+
+
+def format_date(year, month):
+    months = ["Jan", "Feb", "Mar", 
+              "Apr", "May", "Jun", 
+              "Jul", "Aug", "Sep", 
+              "Oct", "Nov", "Dec"]
+    
+
+    new_year = year
+    new_month = months[int(month) - 1]
+
+    return f"{new_month} {new_year}"
