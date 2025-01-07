@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ViewAccounts from '../../components/ViewAccounts';
 import ExpensesBarGraph from '../../components/ExpensesBarGraph';
-import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
     const getToken = () => localStorage.getItem('token');
