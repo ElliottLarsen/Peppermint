@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ViewAccounts from '../../components/ViewAccounts';
+import ExpensesBarGraph from '../../components/ExpensesBarGraph';
+import { useNavigate } from 'react-router-dom';
+import { handleError } from '../../app_utilities/HandleError';
 
 const LandingPage = () => {
     const getToken = () => localStorage.getItem('token');
+    const navigate = useNavigate();
     const [username, setUsername] = useState(null);
+    const [expensesData, setExpensesData]= useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -25,6 +30,24 @@ const LandingPage = () => {
         };
         fetchUserName();
     }, []);
+
+    useEffect(() => {
+        const fetchExpensesData = async () => {
+            const getToken = () => localStorage.getItem('token');
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/peppermint/account/expenses/six_months`, {
+                    headers: {
+                        Authorization: `Bearer ${getToken()}`
+                    }
+                });
+                setExpensesData(response.data);
+        
+            } catch (error) {
+                handleError(error, navigate);
+            }
+        };
+        fetchExpensesData();
+    }, [navigate]);
 
     if (loading) {
         return <div><p>Loading...</p></div>;
@@ -49,6 +72,7 @@ const LandingPage = () => {
                 <ViewAccounts />
             </div>
             <div class='expenses-card'>
+               {expensesData ? <ExpensesBarGraph expensesData={expensesData} /> : <p>Loading...</p>}
             </div>
         </div>
         </>
