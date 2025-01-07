@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from starlette import status
+from datetime import datetime, timedelta
 from database import get_db
 from domain.account.account_crud import (
     create_account,
@@ -9,6 +10,7 @@ from domain.account.account_crud import (
     remove_account,
     get_account_by_id,
     get_user_accounts,
+    get_users_accounts_balance,
 )
 from domain.user.user_crud import (
     validate_user,
@@ -16,6 +18,9 @@ from domain.user.user_crud import (
 from domain.transaction.transaction_crud import (
     get_account_transactions_all,
     get_all_transactions,
+    get_expenses_total_for_month,
+    get_six_months_total_expenses,
+    sort_transactions_date,
 )
 from domain.account.account_schema import (
     AccountCreate,
@@ -70,7 +75,43 @@ def account_get_all_transactions(
     current_user: User = Depends(get_current_user),
 ):
     validate_user(db, current_user)
-    return get_all_transactions(db, current_user.id)
+    all_transactions = get_all_transactions(db, current_user.id)
+    return sort_transactions_date(all_transactions)
+
+
+@router.get("/expenses")
+def account_get_month_expenses(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    get current month's expenses
+    """
+    today = datetime.today()
+    year, month = today.year, today.month
+    return get_expenses_total_for_month(db, current_user.id, year, month)
+
+
+@router.get("/expenses/six_months")
+def account_get_six_months_expenses(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    get last six months' total expenses
+    """
+    today = datetime.today()
+    year, month, day = today.year, today.month, today.day
+    return get_six_months_total_expenses(db, current_user.id, year, month, day)
+
+
+@router.get("/total_balances")
+def account_get_total_balances(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    validate_user(db, current_user)
+    return get_users_accounts_balance(db, current_user.id)
 
 
 @router.get("/{id}")

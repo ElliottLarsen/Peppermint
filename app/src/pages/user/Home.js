@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ViewAccounts from '../../components/ViewAccounts';
+import ExpensesBarGraph from '../../components/ExpensesBarGraph';
 
 const LandingPage = () => {
     const getToken = () => localStorage.getItem('token');
@@ -49,6 +50,7 @@ const LandingPage = () => {
                 <ViewAccounts />
             </div>
             <div class='expenses-card'>
+              <ExpensesBarGraph />
             </div>
         </div>
         </>

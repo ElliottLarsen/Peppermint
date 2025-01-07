@@ -67,7 +67,7 @@ def account_balance_update(
 
     # db.add(account) first location
     account = get_account_by_id(db, account.id)
-    # test 
+    # test
     db.add(account)
     db.commit()
 
@@ -106,3 +106,20 @@ def get_all_accounts_by_user_id(
     if not accounts:
         return
     return accounts
+
+
+def get_users_accounts_balance(
+    db: Session,
+    user_id: str,
+):
+    """
+    return all account's balances combined
+    """
+    accounts_total = 0
+
+    accounts = get_all_accounts_by_user_id(db, user_id)
+
+    for account in accounts:
+        accounts_total += account.current_balance
+
+    return accounts_total
