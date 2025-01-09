@@ -46,6 +46,7 @@ const LandingPage = () => {
         <div class="page-title">
             <h2>Welcome back, {username}!</h2>
         </div>
+        <div class='main-display'>
         <div class="user-landing">
             <div class='account-card'>
                 <ViewAccounts />
@@ -54,8 +55,9 @@ const LandingPage = () => {
               <ExpensesBarGraph />
             </div>
         </div>
-        <div>
+        <div class ='expense-category-card'>
             <ExpenseCategoryDoughnut />
+        </div>
         </div>
         </>
     )

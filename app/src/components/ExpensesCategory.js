@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { handleError } from '../app_utilities/HandleError';
-import { Chart as ChartJS, CategoryScale, ArcElement, Colors, LinearScale, BarController, BarElement, Title, Legend, plugins } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, ArcElement, Colors, Title, Tooltip, plugins } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 
-ChartJS.register(CategoryScale, ArcElement, Colors, Title, Legend);
+ChartJS.register(CategoryScale, ArcElement, Colors, Title, Tooltip);
 
 const ExpenseCategoryDoughnut = () => {
         const getToken = () => localStorage.getItem('token');
@@ -42,15 +42,21 @@ const ExpenseCategoryDoughnut = () => {
             const categoryTotals = Object.values(expenseCategoryData);
 
             const doughnutData = {
-                lables: categoryLabels,
+                labels: categoryLabels,
                 datasets: [{
-                    label: 'Current Expenses',
                     data: categoryTotals,
                     hoverOffset: 4,
                 }]
             };
             const doughnutOptions = {
                 plugins: {
+                    title: {
+                        display: true,
+                        text:"Current Month Expenses by Category"},
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                    },
                     colors: {}
                 }
             };
@@ -63,8 +69,8 @@ const ExpenseCategoryDoughnut = () => {
                 <Doughnut 
                     data={ expensesDoughnut.data} 
                     options={ expensesDoughnut.options }
-                    cx={200}
-                    cy={200}
+                    height="300"
+                    width='300'
                     innerRadius={60}
                     outerRadius={80}
                 />
