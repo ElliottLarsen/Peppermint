@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ViewAccounts from '../../components/ViewAccounts';
 import ExpensesBarGraph from '../../components/ExpensesBarGraph';
+import ExpenseCategoryDoughnut from '../../components/ExpensesCategory';
 
 const LandingPage = () => {
     const getToken = () => localStorage.getItem('token');
@@ -52,6 +53,9 @@ const LandingPage = () => {
             <div class='expenses-card'>
               <ExpensesBarGraph />
             </div>
+        </div>
+        <div>
+            <ExpenseCategoryDoughnut />
         </div>
         </>
     )

@@ -18,7 +18,9 @@ from domain.user.user_crud import (
 from domain.transaction.transaction_crud import (
     get_account_transactions_all,
     get_all_transactions,
+    get_all_transactions_by_month,
     get_expenses_total_for_month,
+    get_monthly_expenses_by_category,
     get_six_months_total_expenses,
     sort_transactions_date,
 )
@@ -103,6 +105,17 @@ def account_get_six_months_expenses(
     today = datetime.today()
     year, month, day = today.year, today.month, today.day
     return get_six_months_total_expenses(db, current_user.id, year, month, day)
+
+
+@router.get("/expenses/by_category")
+def account_get_month_expenses_by_category(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    today = datetime.today()
+    year, month = today.year, today.month
+    transactions = get_all_transactions_by_month(db, current_user.id, year, month)
+    return get_monthly_expenses_by_category(transactions)
 
 
 @router.get("/total_balances")
