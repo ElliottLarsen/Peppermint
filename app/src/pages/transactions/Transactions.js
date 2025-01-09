@@ -28,8 +28,7 @@ const GetAllTransactions = () => {
                 alert('No Transactions available at this time');
                 setTransactions([]);
             } else {
-                const sortedTransactions = data.sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date));
-                setTransactions(sortedTransactions);
+                setTransactions(data);
             }
         } catch (error) {
             handleError(error, navigate);

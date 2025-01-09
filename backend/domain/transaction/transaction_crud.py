@@ -291,18 +291,35 @@ def get_monthly_expenses_by_category(transactions):
         "shopping": 0,
     }
 
-    for item in transactions:
-        expense_balances[item.transaction_category] += abs(item.transaction_amount)
+    used_categories = {}
 
-    return expense_balances
+    for item in transactions:
+        category = item.transaction_category
+        if item.transaction_category in expense_balances:
+            expense_balances[category] += abs(item.transaction_amount)
+
+    for key, value in expense_balances.items():
+        if expense_balances[key] != 0:
+            used_categories[key] = value
+
+    return used_categories
 
 
 def format_date(year, month):
-    months = ["Jan", "Feb", "Mar", 
-              "Apr", "May", "Jun", 
-              "Jul", "Aug", "Sep", 
-              "Oct", "Nov", "Dec"]
-    
+    months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ]
 
     new_year = year
     new_month = months[int(month) - 1]

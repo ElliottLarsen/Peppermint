@@ -48,7 +48,7 @@ const ExpensesBarGraph = () => {
                 labels: expenseLabels,
                 datasets: [
                     {
-                    label: 'Last 6 Months Expenses',
+                    label: 'Expense Totals',
                     data: expenseTotal,
                     backgroundColor: 'rgba(0,255,0,0.5)',
                     borderColor: "black",
@@ -57,6 +57,12 @@ const ExpensesBarGraph = () => {
                 ],
             };
             const chartOptions = {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Last 6 Months Expense Totals'
+                    },
+                },
                 responsive: true,
                 scales: {
                     x: {
