@@ -63,8 +63,8 @@ function App() {
             <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
             <Route path="/accounts" element={<GetAccounts />} />
             <Route path="/accounts/:accountId" element={<ViewAccountDetail/>} />
-            <Route path="/accounts/add_account" element={<AddAccount />} />
-            <Route path="/accounts/edit_account/:id" element={<EditAccount />} />
+            {/* <Route path="/accounts/add_account" element={<AddAccount />} /> */}
+            {/* <Route path="/accounts/edit_account/:id" element={<EditAccount />} /> */}
             <Route path="/budgets" element={<GetBudgets />} />
             <Route path="/budgets/add_budget" element={<AddBudget />} />
             <Route path="/budgets/edit_budget/:budgetId" element={<EditBudget />} />

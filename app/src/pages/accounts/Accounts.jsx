@@ -99,6 +99,7 @@ export default function GetAccounts() {
                 <AccountForm 
                 httpType={'put'}
                 account_id={accountId} 
+                refreshAccounts={fetchAccounts}
                 setIsActive={setIsActive}
                 />
 

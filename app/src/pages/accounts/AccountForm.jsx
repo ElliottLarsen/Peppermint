@@ -85,6 +85,7 @@ export default function AccountForm({ httpType, account_id, refreshAccounts, set
             });
             alert('Account updated successfully');
             setIsActive('accountHome');
+            fetchAccountData(account_id);
             refreshAccounts();
         } catch (error) {
             console.error('Error updated account: ', error);
@@ -128,8 +129,8 @@ export default function AccountForm({ httpType, account_id, refreshAccounts, set
 
 
                         <label htmlFor='account_type' className='required'>Account type: </label>
-                        <select name='account_type' id='account_type' value={selectedType} onChange={handleChange}>
-                            <option value="" selected></option>
+                        <select name='account_type' id='account_type' defaultValue={selectedType} onChange={handleChange}>
+                            <option value=""></option>
                             {accountCategories.map((category) => (
                                 <option key={category.value} value={category.value}>
                                     {category.key}
