@@ -7,8 +7,6 @@ import Register from './pages/Register';
 import GetAccounts from './pages/accounts/Accounts';
 import ViewAccountDetail from './components/AccountDetail';
 import GetBudgets from './pages/budgets/Budgets';
-import AddBudget from './pages/budgets/AddBudget';
-import EditBudget from './pages/budgets/EditBudget';
 import GetAllTransactions from './pages/transactions/Transactions';
 import AddTransaction from './pages/transactions/AddTransaction';
 import EditTransaction from './pages/transactions/EditTransaction';
@@ -28,7 +26,7 @@ function App() {
     return (
         <>
         <header>
-            <div class="navbar">
+            <div className="navbar">
             <div>
                 <h1>Peppermint</h1>
             </div>
@@ -62,8 +60,6 @@ function App() {
             <Route path="/accounts" element={<GetAccounts />} />
             <Route path="/accounts/:accountId" element={<ViewAccountDetail/>} />
             <Route path="/budgets" element={<GetBudgets />} />
-            <Route path="/budgets/add_budget" element={<AddBudget />} />
-            <Route path="/budgets/edit_budget/:budgetId" element={<EditBudget />} />
             <Route path="/transactions" element={<GetAllTransactions />} />
             <Route path="/transactions/add_transaction/" element={<AddTransaction />} />
             <Route path="/transactions/edit_transaction/:accountId/:transactionId" element={<EditTransaction />} />
