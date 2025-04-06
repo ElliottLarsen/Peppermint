@@ -7,6 +7,7 @@ import FormatDate from '../app_utilities/FormatDate';
 
 const ViewAccountDetail = () => {
     const { accountId } = useParams();
+    const getToken = () => localStorage.getItem('token');
     const [accountTransactions, setAccountTransactions] = useState(null);
     const [accountName, setAccountName] = useState("");
     const [loading, setLoading] = useState(true);
@@ -21,10 +22,9 @@ const ViewAccountDetail = () => {
     useEffect(() => {
         const fetchAccountName = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get(`http://127.0.0.1:8000/peppermint/account/${accountId}`, {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${getToken()}`
                     }
                 });
                 setAccountName(response.data.institution);
@@ -39,10 +39,9 @@ const ViewAccountDetail = () => {
 
     const fetchAccountTransactions =  async () => {
         try {
-            const token = localStorage.getItem('token');
             const response = await axios.get(`http://127.0.0.1:8000/peppermint/account/${accountId}/transactions`, {
                 headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${getToken()}`
                 }
             });
             setAccountTransactions(response.data);
@@ -60,10 +59,9 @@ const ViewAccountDetail = () => {
 
     const handleDeleteTransaction = async(account_id, id) => {
         try {
-            const token = localStorage.getItem('token');
             await axios.delete(`http://127.0.0.1:8000/peppermint/${account_id}/${id}`, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${getToken()}`
                 }
             });
             fetchAccountTransactions();

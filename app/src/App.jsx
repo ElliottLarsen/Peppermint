@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Login from "./pages/Login";
 import Logout from "./components/Logout";
 import Register from './pages/Register';
 import GetAccounts from './pages/accounts/Accounts';
-import AddAccount from './pages/accounts/AddAccount';
-import EditAccount from './pages/accounts/EditAccount';
 import ViewAccountDetail from './components/AccountDetail';
 import GetBudgets from './pages/budgets/Budgets';
 import AddBudget from './pages/budgets/AddBudget';
@@ -63,8 +61,6 @@ function App() {
             <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
             <Route path="/accounts" element={<GetAccounts />} />
             <Route path="/accounts/:accountId" element={<ViewAccountDetail/>} />
-            <Route path="/accounts/add_account" element={<AddAccount />} />
-            <Route path="/accounts/edit_account/:id" element={<EditAccount />} />
             <Route path="/budgets" element={<GetBudgets />} />
             <Route path="/budgets/add_budget" element={<AddBudget />} />
             <Route path="/budgets/edit_budget/:budgetId" element={<EditBudget />} />
