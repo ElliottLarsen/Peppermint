@@ -1,20 +1,18 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'
-import { MdOutlineEdit, MdAddCircleOutline, MdDeleteOutline } from "react-icons/md";
-import FormatCurrency from '../../app_utilities/FormatCurrency';
+import { MdAddCircleOutline } from "react-icons/md";
 import { handleError } from '../../app_utilities/HandleError';
 
+import AccountsDisplay from './AccountsDisplay';
 import AccountForm from './AccountForm';
 
 export default function GetAccounts() {
-
     const getToken = () => localStorage.getItem('token');
-    const navigate = useNavigate();
-
     const [accounts, setAccounts] = useState(null);
     const [accountId, setAccountId] = useState();
     const [isActive, setIsActive] = useState('accountHome')
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchAccounts();
@@ -60,54 +58,36 @@ export default function GetAccounts() {
 
     return (
         <>
-            <div class="page-title">
+            <div className="page-title">
                 <h2>Accounts</h2>
             </div>
             {(isActive === 'accountHome') ? (
-                <div class="account-table">
+                <div className="account-table">
                     <div>
-                        <i class="add-button" title="Add New Account"><MdAddCircleOutline onClick={() => handleFormClick('addAccount')} /></i>
+                        <i className="add-button" title="Add New Account">
+                            <MdAddCircleOutline onClick={() => handleFormClick('addAccount')} />
+                        </i>
                     </div>
                     <div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Institution</th>
-                                    <th>Account Type</th>
-                                    <th>Balance</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {accounts.map(account => (
-                                    <tr key={account.id}>
-                                        <td>{account.institution}</td>
-                                        <td>{account.account_type}</td>
-                                        <td><FormatCurrency amount={account.current_balance} /></td>
-                                        <td><i class="edit-button" title="Edit Account"><MdOutlineEdit
-                                            onClick={() => handleFormClick('editAccount', account.id)} /></i>
-                                            <i class="delete-button" title="Delete Account"><MdDeleteOutline
-                                                onClick={() => handleDeleteAccount(account.id)} /></i></td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                        <AccountsDisplay
+                            accounts={accounts}
+                            handleFormClick={handleFormClick}
+                            handleDeleteAccount={handleDeleteAccount}
+                        />
                     </div>
                 </div>
-
             ) : ((isActive === 'editAccount') ? (
-                <AccountForm 
-                httpType={'put'}
-                account_id={accountId} 
-                refreshAccounts={fetchAccounts}
-                setIsActive={setIsActive}
+                <AccountForm
+                    httpType={'put'}
+                    account_id={accountId}
+                    refreshAccounts={fetchAccounts}
+                    setIsActive={setIsActive}
                 />
-
             ) : (
-                <AccountForm 
-                httpType={'post'} 
-                refreshAccounts={fetchAccounts}
-                setIsActive={setIsActive}
+                <AccountForm
+                    httpType={'post'}
+                    refreshAccounts={fetchAccounts}
+                    setIsActive={setIsActive}
                 />
             ))}
         </>

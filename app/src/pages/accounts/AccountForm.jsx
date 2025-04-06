@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 import axios from "axios";
 import { accountCategories } from '../../app_utilities/AccountCategories';
@@ -77,7 +76,6 @@ export default function AccountForm({ httpType, account_id, refreshAccounts, set
     const handleEditSubmit = async (e) => {
         e.preventDefault()
         try {
-
             await axios.put(`http://127.0.0.1:8000/peppermint/account/${account_id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${getToken()}`
@@ -110,19 +108,19 @@ export default function AccountForm({ httpType, account_id, refreshAccounts, set
 
     return (
         <>
-            <div class='page-title'>
-                <h2>{(httpType === 'post') ? 'Add New' : 'Update'} Account</h2>
-                <div>
+            <div className='account-table'>
+                <div className="add-button">
                     <i title="go back">
                         <IoArrowBackCircleOutline
                             onClick={handleClick}
                         />
                     </i>
                 </div>
-            </div>
-            <div>
                 <form onSubmit={(httpType === 'post') ? handleAddSubmit : handleEditSubmit}>
                     <fieldset>
+                        <legend>
+                            <h2>{(httpType === 'post') ? 'Add New' : 'Update'} Account</h2>
+                        </legend>
                         <label htmlFor='institution' className='required'>Institution: </label>
                         <input type='text' name='institution' value={formData.institution} id='institution'
                             onChange={handleChange} required />

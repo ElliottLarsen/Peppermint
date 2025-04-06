@@ -180,7 +180,7 @@ table {
     padding: 1%;
 }
 
-tobdy tr {border-bottom: 1px solid gray;}
+tbody tr {border-bottom: 1px solid gray;}
 
 tr td {
     text-align: center;
