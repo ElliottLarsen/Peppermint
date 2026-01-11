@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 
 
 class AccountCreate(BaseModel):
@@ -6,24 +6,24 @@ class AccountCreate(BaseModel):
     account_type: str
     current_balance: float
 
-    @validator("institution", "account_type")
+    @field_validator("institution", "account_type")
+    @classmethod
     def not_empty(cls, v):
         if not v or not v.strip():
             raise ValueError("This is a required field")
         return v
-
 
 class AccountUpdate(BaseModel):
     institution: str
     account_type: str
     current_balance: float
 
-    @validator("institution", "account_type")
+    @field_validator("institution", "account_type")
+    @classmethod
     def not_empty(cls, v):
         if not v or not v.strip():
             raise ValueError("This is a required field")
         return v
-
 
 class AccountResponse(BaseModel):
     id: str
