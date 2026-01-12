@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from datetime import datetime
 
 
@@ -8,10 +8,11 @@ class TransactionCreate(BaseModel):
     transaction_category: str
     transaction_amount: float
 
-    @validator("transaction_date", "transaction_amount")
+    @field_validator("transaction_date", "transaction_amount")
+    @classmethod
     def not_empty(cls, v):
         if not v:
-            raise ValueError("This is a required field.")
+            raise ValueError("This is a required field")
         return v
 
 
@@ -21,10 +22,11 @@ class TransactionUpdate(BaseModel):
     transaction_category: str
     transaction_amount: float
 
-    @validator("transaction_date", "transaction_amount")
+    @field_validator("transaction_date", "transaction_amount")
+    @classmethod
     def not_empty(cls, v):
         if not v:
-            raise ValueError("This is a required field.")
+            raise ValueError("This is a required field")
         return v
 
 

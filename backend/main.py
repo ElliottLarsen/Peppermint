@@ -5,6 +5,7 @@ from domain.user import user_router
 from domain.account import account_router
 from domain.transaction import transaction_router
 from domain.budget import budget_router
+from domain.file_upload import upload_router
 
 app = FastAPI()
 
@@ -25,4 +26,5 @@ app.include_router(user_router.router, tags=["User"])
 app.include_router(account_router.router, tags=["Account"])
 app.include_router(budget_router.router, tags=["Budget"])
 app.include_router(transaction_router.router, tags=["Transaction"])
+app.include_router(upload_router.router, tags=["Upload"])
 
