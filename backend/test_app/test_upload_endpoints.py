@@ -164,7 +164,6 @@ def test_boa_file_upload(client, test_user):
     assert len(after_upload) == 43
 
 
-
 # ----------------------------------------------------
 #  CLEAN UP
 # ----------------------------------------------------

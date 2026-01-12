@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
 from fastapi import (
-    FastAPI,
     Depends, 
     File, 
     UploadFile, 
@@ -10,7 +9,6 @@ from fastapi import (
 from io import StringIO
 from starlette import status
 from datetime import datetime
-import csv, json
 from database import get_db
 from domain.transaction.transaction_crud import (
     create_transaction,
@@ -64,7 +62,8 @@ def convert_digit_string(num) -> float:
 
 def read_boa_file(reader):
     transactions = []
-    for row in reader:
+    for r in reader:
+        row = r.split(",")
         if len(row) > 3 and row[0][0].isdigit():
             if "Beginning balance" in row[1]:
                 continue
@@ -72,12 +71,6 @@ def read_boa_file(reader):
             description = row[1] if row[1] else ""
             category = ""
             amount = (convert_digit_string(row[2])) if row[2] else 0.00
-            # row_transaction = {
-            #     'transaction_date': date, 
-            #     'transaction_description':description, 
-            #     'transaction_category':category, 
-            #     'transaction_amount':amount
-            # }
             row_transaction = TransactionCreate(
                 transaction_date=date,
                 transaction_description=description.lstrip('"').rstrip('"'),
