@@ -1,9 +1,16 @@
-import { useState } from 'react';
-import { Link, Routes, Route } from 'react-router-dom';
+
+import { Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layout';
+
 import './App.css';
+
+import Welcome from './pages/Welcome';
 import Login from "./pages/Login";
-import Logout from "./components/Logout";
 import Register from './pages/Register';
+
+import LandingPage from './pages/user/Home';
 import GetAccounts from './pages/accounts/Accounts';
 import ViewAccountDetail from './components/AccountDetail';
 import GetBudgets from './pages/budgets/Budgets';
@@ -12,67 +19,34 @@ import AddTransaction from './pages/transactions/AddTransaction';
 import EditTransaction from './pages/transactions/EditTransaction';
 import Profile from './pages/user/User';
 import User from './pages/user/EditUser';
-import LandingPage from './pages/user/Home';
-import Welcome from './pages/Welcome';
+
 
 function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setIsLoggedIn(false);
-    };
-
     return (
-        <>
-        <header>
-            <div className="navbar">
-            <div>
-                <h1>Peppermint</h1>
-            </div>
-            <div>
-                <nav>
-                    {isLoggedIn ? (
-                        <>
-                        <Link to="/home">Home</Link>
-                        <Link to="/accounts">Accounts</Link>
-                        <Link to="/transactions">Transactions</Link>
-                        <Link to="/budgets">Budgets</Link>
-                        <Link to='/user'>Profile</Link>
-                        <Link to='/logout'>Logout</Link>
-                        </>
-                    ) : (
-                        <>
-                        <Link to="/">Home</Link>
-                        <Link to="/register">Register</Link>
-                        <Link to="/login">Login</Link>
-                        </>
-                    )}
-                </nav>
-            </div>
-            </div>
-        </header>
-        <main>
-        <Routes>
-            <Route path="/" element={<Welcome />} />
-            <Route path='/register' element={<Register />} />
-            <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-            <Route path="/accounts" element={<GetAccounts />} />
-            <Route path="/accounts/:accountId" element={<ViewAccountDetail/>} />
-            <Route path="/budgets" element={<GetBudgets />} />
-            <Route path="/transactions" element={<GetAllTransactions />} />
-            <Route path="/transactions/add_transaction/" element={<AddTransaction />} />
-            <Route path="/transactions/edit_transaction/:accountId/:transactionId" element={<EditTransaction />} />
-            <Route path="/home" element={<LandingPage />} />
-            <Route path="/user" element={<Profile />} /> 
-            <Route path="/user/edit" element={<User />} />
-            <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} />} />
-        </Routes>
-        </main>
-        <footer>
-            <p>&copy;2025</p>
-        </footer>
-        </>
+        <AuthProvider>
+            <Routes>
+                <Route path="/" element={<Layout />}>
+                    {/* Public */}
+                    <Route index element={<Welcome />} />
+                    <Route path='register' element={<Register />} />
+                    <Route path="login" element={<Login />} />
+
+                    {/* Protected */}
+                    <Route element={<ProtectedRoute />}>
+                        <Route path="home" element={<LandingPage />} />
+                        <Route path="accounts" element={<GetAccounts />} />
+                        <Route path="accounts/:accountId" element={<ViewAccountDetail/>} />
+                        <Route path="budgets" element={<GetBudgets />} />
+                        <Route path="transactions" element={<GetAllTransactions />} />
+                        <Route path="transactions/add_transaction/" element={<AddTransaction />} />
+                        <Route path="transactions/edit_transaction/:accountId/:transactionId" element={<EditTransaction />} />
+                        
+                        <Route path="user" element={<Profile />} /> 
+                        <Route path="user/edit" element={<User />} />
+                    </Route>
+                </Route>
+            </Routes>
+        </AuthProvider>
     );
 }
 

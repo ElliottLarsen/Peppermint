@@ -1,19 +1,21 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext';
 
-
-export default function Login({ setIsLoggedIn }) {
+export default function Login() {
     const [loginData, setLoginData] = useState({ username: "", password: ""});
-    const navigateTo = useNavigate();
+    const { login } = useAuth();
 
     const handleChange = (evt) => {
-        const changeField = evt.target.name;
-        const newValue = evt.target.value;
-        setLoginData(currData => {
-            currData[changeField] = newValue;
-            return { ...currData };
-        })
+        // const changeField = evt.target.name;
+        // const newValue = evt.target.value;
+        // setLoginData(currData => {
+        //     currData[changeField] = newValue;
+        //     return { ...currData };
+        // })
+
+        const { name, value } = evt.target;
+        setLoginData(currData => ({ ...currData, [name]: value }));
     }
 
     const handleLogin = (evt) => {
@@ -23,9 +25,7 @@ export default function Login({ setIsLoggedIn }) {
         params.append("password", loginData.password);
         axios.post("http://127.0.0.1:8000/peppermint/user/login", params)
             .then((res) => {
-                localStorage.setItem("token", res.data.access_token);
-                setIsLoggedIn(true);
-                navigateTo("/home");
+                login(res.data.access_token);
             })
             .catch((e) => {
                 console.error("Login error", e.response);
