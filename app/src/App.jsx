@@ -34,15 +34,17 @@ function App() {
                     {/* Protected */}
                     <Route element={<ProtectedRoute />}>
                         <Route path="home" element={<LandingPage />} />
+                        <Route path="user" element={<Profile />} /> 
+                        <Route path="user/edit" element={<User />} />
+
                         <Route path="accounts" element={<GetAccounts />} />
                         <Route path="accounts/:accountId" element={<ViewAccountDetail/>} />
+
                         <Route path="budgets" element={<GetBudgets />} />
+                        
                         <Route path="transactions" element={<GetAllTransactions />} />
                         <Route path="transactions/add_transaction/" element={<AddTransaction />} />
                         <Route path="transactions/edit_transaction/:accountId/:transactionId" element={<EditTransaction />} />
-                        
-                        <Route path="user" element={<Profile />} /> 
-                        <Route path="user/edit" element={<User />} />
                     </Route>
                 </Route>
             </Routes>
