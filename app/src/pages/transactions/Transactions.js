@@ -24,8 +24,8 @@ const GetAllTransactions = () => {
                 }
             });
             const data = response.data
-            if (data.length === 0) {
-                alert('No Transactions available at this time');
+            if (data.length === 0 || data === null) {
+                // alert('No Transactions available at this time');
                 setTransactions([]);
             } else {
                 setTransactions(data);
@@ -59,7 +59,7 @@ const GetAllTransactions = () => {
                     <i class="add-button" title="Add New Transaction"><MdAddCircleOutline onClick={() => navigate('/transactions/add_transaction')} /></i>
                 </div>
                 <div>
-                    {transactions.length === 0 ? (
+                    {transactions?.length === 0 ? (
                         <p>No transactions found </p>
                     ) : (
                         <table>
@@ -73,7 +73,7 @@ const GetAllTransactions = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {transactions.map((transaction, index) => (
+                                {transactions?.map((transaction, index) => (
                                     <tr key={index}>
                                         <td><FormatDate date={transaction.transaction_date} /></td>
                                         <td>{transaction.transaction_description}</td>

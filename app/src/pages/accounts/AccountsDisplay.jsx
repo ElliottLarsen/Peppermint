@@ -14,7 +14,7 @@ export default function AccountsDisplay({ accounts, handleFormClick, handleDelet
                     </tr>
                 </thead>
                 <tbody>
-                    {accounts.map(account => (
+                    {accounts?.map(account => (
                         <tr key={account.id}>
                             <td>{account.institution}</td>
                             <td>{account.account_type}</td>

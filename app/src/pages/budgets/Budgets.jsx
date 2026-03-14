@@ -11,7 +11,7 @@ export default function GetBudgets() {
     const navigate = useNavigate();
     const getToken = () => localStorage.getItem('token');
 
-    const [budgets, setBudgets] = useState(null);
+    const [budgets, setBudgets] = useState([]);
     const [budgetId, setBudgetId] = useState();
     const [currentBalances, setCurrentBalance] = useState([]);
     const [isActive, setIsActive] = useState('budgetsHome');
@@ -31,7 +31,7 @@ export default function GetBudgets() {
                     Authorization: `Bearer ${getToken()}`
                 }
             });
-            setBudgets(response.data);
+            setBudgets(response.data || []);
         } catch (error) {
             handleError(error, navigate);
         }
@@ -44,7 +44,7 @@ export default function GetBudgets() {
                     Authorization: `Bearer ${getToken()}`
                 }
             });
-            setCurrentBalance(cbResponse.data);
+            setCurrentBalance(cbResponse.data || []);
         } catch (error) {
             handleError(error, navigate);
         }
@@ -85,7 +85,7 @@ export default function GetBudgets() {
                         </i>
                     </div>
                     <div>
-                        {!budgets ? (
+                        { budgets.length === 0 ? (
                             <p> No budgets found </p>
                         ) : (
                             <BudgetsDisplay

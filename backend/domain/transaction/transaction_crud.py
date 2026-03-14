@@ -148,11 +148,12 @@ def get_all_transactions(db: Session, user_id: str):
 
     accounts = get_all_accounts_by_user_id(db, user_id)
 
-    for account in accounts:
-        account_transactions = get_account_transactions_all(db, account.id)
-        if account_transactions:
-            for item in account_transactions:
-                transactions.append(item)
+    if accounts:
+        for account in accounts:
+            account_transactions = get_account_transactions_all(db, account.id)
+            if account_transactions:
+                for item in account_transactions:
+                    transactions.append(item)
 
     return transactions
 
@@ -183,11 +184,12 @@ def get_all_transactions_by_month(db: Session, user_id: str, year: int, month: i
 
     accounts = get_all_accounts_by_user_id(db, user_id)
 
-    for account in accounts:
-        current_month = get_account_transactions_by_month(db, account.id, year, month)
-        if current_month:
-            for item in current_month:
-                monthly_transactions.append(item)
+    if accounts:
+        for account in accounts:
+            current_month = get_account_transactions_by_month(db, account.id, year, month)
+            if current_month:
+                for item in current_month:
+                    monthly_transactions.append(item)
 
     return monthly_transactions
 
@@ -238,9 +240,10 @@ def get_expenses_total_for_month(db: Session, user_id: str, year: int, month: in
     income = {"credit", "income", "transfer"}
 
     transactions = get_all_transactions_by_month(db, user_id, year, month)
-    for item in transactions:
-        if item.transaction_category not in income:
-            current_total += abs(item.transaction_amount)
+    if transactions:
+        for item in transactions:
+            if item.transaction_category not in income:
+                current_total += abs(item.transaction_amount)
 
     return current_total
 
@@ -265,10 +268,11 @@ def get_six_months_total_expenses(
             db, user_id, current_year, current_month
         )
         date_key = format_date(current_year, current_month)
-        for item in transactions:
-            if item.transaction_category not in income:
-                total_expenses += abs(item.transaction_amount)
-        expenses_by_month[f"{date_key}"] = total_expenses
+        if transactions:
+            for item in transactions:
+                if item.transaction_category not in income:
+                    total_expenses += abs(item.transaction_amount)
+            expenses_by_month[f"{date_key}"] = total_expenses
 
     return expenses_by_month
 
@@ -292,15 +296,15 @@ def get_monthly_expenses_by_category(transactions):
     }
 
     used_categories = {}
+    if transactions:
+        for item in transactions:
+            category = item.transaction_category
+            if item.transaction_category in expense_balances:
+                expense_balances[category] += abs(item.transaction_amount)
 
-    for item in transactions:
-        category = item.transaction_category
-        if item.transaction_category in expense_balances:
-            expense_balances[category] += abs(item.transaction_amount)
-
-    for key, value in expense_balances.items():
-        if expense_balances[key] != 0:
-            used_categories[key] = value
+        for key, value in expense_balances.items():
+            if expense_balances[key] != 0:
+                used_categories[key] = value
 
     return used_categories
 

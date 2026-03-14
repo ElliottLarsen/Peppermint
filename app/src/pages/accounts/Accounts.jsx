@@ -3,51 +3,53 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MdAddCircleOutline } from "react-icons/md";
 import { handleError } from '../../app_utilities/HandleError';
+import { useAccounts } from '../../hooks/useAccounts';
 
 import AccountsDisplay from './AccountsDisplay';
 import AccountForm from './AccountForm';
 
 export default function GetAccounts() {
     const getToken = () => localStorage.getItem('token');
-    const [accounts, setAccounts] = useState(null);
+    // const [accounts, setAccounts] = useState([]);
     const [accountId, setAccountId] = useState();
     const [isActive, setIsActive] = useState('accountHome')
     const navigate = useNavigate();
+    const { accounts, fetchAccounts, deleteAccount, loading } = useAccounts();
+ 
+    // useEffect(() => {
+    //     fetchAccounts();
+    // }, []);
 
-    useEffect(() => {
-        fetchAccounts();
-    }, []);
-
-    const fetchAccounts = async () => {
-        try {
-            const response = await axios.get('http://127.0.0.1:8000/peppermint/account/my_accounts', {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            setAccounts(response.data);
-        } catch (error) {
-            handleError(error, navigate);
-        }
-    };
+    // const fetchAccounts = async () => {
+    //     try {
+    //         const response = await axios.get('http://127.0.0.1:8000/peppermint/account/my_accounts', {
+    //             headers: {
+    //                 Authorization: `Bearer ${getToken()}`
+    //             }
+    //         });
+    //         setAccounts(response.data || []);
+    //     } catch (error) {
+    //         handleError(error, navigate);
+    //     }
+    // };
 
     if (!accounts) {
         return <div><p>No account info available.</p></div>;
     }
 
-    const handleDeleteAccount = async (id) => {
-        try {
-            await axios.delete(`http://127.0.0.1:8000/peppermint/account/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            fetchAccounts();
-            alert('Account deleted!')
-        } catch (error) {
-            console.error('Error deleting account', error);
-        }
-    };
+    // const handleDeleteAccount = async (id) => {
+    //     try {
+    //         await axios.delete(`http://127.0.0.1:8000/peppermint/account/${id}`, {
+    //             headers: {
+    //                 Authorization: `Bearer ${getToken()}`
+    //             }
+    //         });
+    //         fetchAccounts();
+    //         alert('Account deleted!')
+    //     } catch (error) {
+    //         console.error('Error deleting account', error);
+    //     }
+    // };
 
     function handleFormClick(value, account_id) {
         setIsActive(value);
@@ -69,11 +71,13 @@ export default function GetAccounts() {
                         </i>
                     </div>
                     <div>
+                        { (accounts.length > 0) ? (
                         <AccountsDisplay
                             accounts={accounts}
                             handleFormClick={handleFormClick}
-                            handleDeleteAccount={handleDeleteAccount}
-                        />
+                            handleDeleteAccount={deleteAccount}
+                        /> ) : (<p>Add an account!</p>)
+                        }
                     </div>
                 </div>
             ) : ((isActive === 'editAccount') ? (

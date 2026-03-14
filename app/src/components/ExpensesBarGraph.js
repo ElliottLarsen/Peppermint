@@ -33,7 +33,7 @@ const ExpensesBarGraph = () => {
             
             });
 
-            setExpensesData(response.data);
+            setExpensesData(response.data || {});
 
         } catch (error) {
             handleError(error, navigate);
@@ -81,7 +81,7 @@ const ExpensesBarGraph = () => {
     return (
         <div>
             { expensesChart ? (
-                <Bar data={ expensesChart.data } options={ expensesChart.options } width='400' height='200' />
+                <Bar data={ expensesChart?.data } options={ expensesChart?.options } width='400' height='200' />
             ) : (<p>Loading...</p>)
             }
         </div>

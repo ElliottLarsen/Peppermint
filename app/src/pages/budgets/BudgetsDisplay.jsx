@@ -14,7 +14,7 @@ export default function BudgetsDisplay({ currentBalances, budgets, handleFormCli
                     </tr>
                 </thead>
                 <tbody>
-                    {budgets.map(budget => (
+                    {budgets?.map(budget => (
                         <tr key={budget.id}>
                             <td>{budget.budget_category}</td>
                             <td><FormatCurrency amount={currentBalances[budget.budget_category]} /></td>
