@@ -7,13 +7,6 @@ export default function Login() {
     const { login } = useAuth();
 
     const handleChange = (evt) => {
-        // const changeField = evt.target.name;
-        // const newValue = evt.target.value;
-        // setLoginData(currData => {
-        //     currData[changeField] = newValue;
-        //     return { ...currData };
-        // })
-
         const { name, value } = evt.target;
         setLoginData(currData => ({ ...currData, [name]: value }));
     }

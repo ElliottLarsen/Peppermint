@@ -8,8 +8,6 @@ export const useAccounts = () => {
     const [ loading, setLoading ] = useState(true);
     const navigate = useNavigate();
 
-    const token = localStorage.getItem('token');
-
     const fetchAccounts = async () => {
         try {
             const response = await api.get('/account/my_accounts');

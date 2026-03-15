@@ -4,6 +4,7 @@ import axios from 'axios';
 import { adjustTransactionAmount } from '../../components/AdjustTransactionAmount';
 import { categories } from '../../app_utilities/TransactionCategories';
 import { handleError } from '../../app_utilities/HandleError';
+import { useTransactions } from '../../hooks/useTransactions';
 
 export default function AddTransaction() {
     const getToken = () => localStorage.getItem('token');
@@ -17,6 +18,8 @@ export default function AddTransaction() {
         transaction_category: '',
         transaction_amount: '',
     });
+
+    const { accountOptions } = useTransactions();
 
     useEffect(() => {
         fetchAccounts();
@@ -93,7 +96,7 @@ export default function AddTransaction() {
                 <fieldset>
                     <label htmlFor='account_id'>Account</label>
                     <select id="account_id" value={selectedAccount} onChange={handleAccountSelect} required>
-                    { accountOption && accountOption.map((account) => (
+                    { accountOptions && accountOptions.map((account) => (
                         <option key={ account.value } value={ account.value }>
                             { account.key }
                         </option>

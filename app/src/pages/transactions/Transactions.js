@@ -5,49 +5,50 @@ import { MdOutlineEdit, MdAddCircleOutline, MdDeleteOutline } from "react-icons/
 import FormatCurrency from '../../app_utilities/FormatCurrency';
 import FormatDate from '../../app_utilities/FormatDate';
 import { handleError } from '../../app_utilities/HandleError';
+import { useTransactions } from '../../hooks/useTransactions';
 
 const GetAllTransactions = () => {
     const navigate = useNavigate();
     const getToken = () => localStorage.getItem('token');
 
-    const [transactions, setTransactions] = useState([]);
+    // const [transactions, setTransactions] = useState([]);
+    const { transactions, deleteTransaction } = useTransactions();
+    // useEffect(() => {
+    //     fetchAllTransactions();
+    // }, []);
 
-    useEffect(() => {
-        fetchAllTransactions();
-    }, []);
+    // const fetchAllTransactions = async () => {
+    //     try {
+    //         const response = await axios.get('http://127.0.0.1:8000/peppermint/account/all_transactions', {
+    //             headers: {
+    //                 Authorization: `Bearer ${getToken()}`
+    //             }
+    //         });
+    //         const data = response.data
+    //         if (data.length === 0 || data === null) {
+    //             // alert('No Transactions available at this time');
+    //             setTransactions([]);
+    //         } else {
+    //             setTransactions(data);
+    //         }
+    //     } catch (error) {
+    //         handleError(error, navigate);
+    //     }
+    // };
 
-    const fetchAllTransactions = async () => {
-        try {
-            const response = await axios.get('http://127.0.0.1:8000/peppermint/account/all_transactions', {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            const data = response.data
-            if (data.length === 0 || data === null) {
-                // alert('No Transactions available at this time');
-                setTransactions([]);
-            } else {
-                setTransactions(data);
-            }
-        } catch (error) {
-            handleError(error, navigate);
-        }
-    };
-
-    const handleDeleteTransaction = async (account_id, id) => {
-        try {
-            await axios.delete(`http://127.0.0.1:8000/peppermint/${account_id}/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            await fetchAllTransactions();
-            alert('Transaction deleted!')
-        } catch (error) {
-            handleError(error, navigate);
-        }
-    };
+    // const handleDeleteTransaction = async (account_id, id) => {
+    //     try {
+    //         await axios.delete(`http://127.0.0.1:8000/peppermint/${account_id}/${id}`, {
+    //             headers: {
+    //                 Authorization: `Bearer ${getToken()}`
+    //             }
+    //         });
+    //         await fetchAllTransactions();
+    //         alert('Transaction deleted!')
+    //     } catch (error) {
+    //         handleError(error, navigate);
+    //     }
+    // };
 
     return (
         <>
@@ -82,7 +83,7 @@ const GetAllTransactions = () => {
                                         <td><i class="edit-button" title="Edit Account"><MdOutlineEdit
                                             onClick={() => navigate(`/transactions/edit_transaction/${transaction.account_id}/${transaction.id}`)} /></i>
                                             <i class="delete-button" title="Delete Account"><MdDeleteOutline
-                                                onClick={() => handleDeleteTransaction(transaction.account_id, transaction.id)} /></i></td>
+                                                onClick={() => deleteTransaction(transaction.account_id, transaction.id)} /></i></td>
                                     </tr>
                                 ))}
                             </tbody>
