@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useNavigate } from "react-router-dom";
 import { handleError } from "../app_utilities/HandleError";
 import api from "../api/client";
@@ -11,13 +11,22 @@ export const useAccounts = () => {
     const fetchAccounts = async () => {
         try {
             const response = await api.get('/account/my_accounts');
-            setAccounts(response.data || []);
+            const data = response.data || [];
+            setAccounts(data);
         } catch (error) {
             handleError(error, navigate);
         } finally {
             setLoading(false);
         }
     };
+
+    const accountOptions = useMemo(() => {
+        const options = accounts.map(acct => ({
+        key: acct.institution,
+        value: acct.id,   
+        }));
+        return [ {key: "", value: ""},...options];
+    }, [accounts])
 
     useEffect(() => { fetchAccounts(); }, []);
 
@@ -31,5 +40,10 @@ export const useAccounts = () => {
         }
     };
 
-    return { accounts, fetchAccounts, deleteAccount, loading };
+    return { 
+        accounts,
+        accountOptions, 
+        fetchAccounts, 
+        deleteAccount, 
+        loading };
 };

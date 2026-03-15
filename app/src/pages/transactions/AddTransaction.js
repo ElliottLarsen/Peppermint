@@ -5,12 +5,12 @@ import { adjustTransactionAmount } from '../../components/AdjustTransactionAmoun
 import { categories } from '../../app_utilities/TransactionCategories';
 import { handleError } from '../../app_utilities/HandleError';
 import { useTransactions } from '../../hooks/useTransactions';
+import { useAccounts } from '../../hooks/useAccounts';
 
 export default function AddTransaction() {
     const getToken = () => localStorage.getItem('token');
     const navigate = useNavigate();
 
-    const [accountOption, setAccountOption] = useState([]);
     const [selectedAccount, setSelectedAccount] = useState("");
     const [addNewTransaction, setNewTransaction] = useState({
         transaction_date: '',
@@ -19,32 +19,8 @@ export default function AddTransaction() {
         transaction_amount: '',
     });
 
-    const { accountOptions } = useTransactions();
-
-    useEffect(() => {
-        fetchAccounts();
-    }, []);
-    
-    const fetchAccounts = async () => {
-        try {
-            const response = await axios.get("http://127.0.0.1:8000/peppermint/account/my_accounts", {
-            headers: {
-                Authorization: `Bearer ${getToken()}`
-            }
-            });
-            const accounts = response.data.map((account) => ({
-                    key: account.institution,
-                    value: account.id,   
-            }));
-            setAccountOption([
-                {key: "", value: ""},
-                ...accounts
-            ])
-            
-        } catch (error) {
-            handleError(error, navigate);
-        }
-    };
+    const { fetchAllTransactions } = useTransactions();
+    const { accountOptions } = useAccounts();
 
     const handleTransactionSubmit = async (e) => {
         e.preventDefault()

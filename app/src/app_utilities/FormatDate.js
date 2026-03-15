@@ -1,6 +1,4 @@
 // Create Date Formatter
-import React from 'react';
-
 const FormatDate = ({ date }) => {
     const dateFormatted = (inputDate) => {
         const options = { day: '2-digit', month: 'short' };
