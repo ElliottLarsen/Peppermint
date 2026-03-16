@@ -15,6 +15,7 @@ import GetAccounts from './pages/accounts/Accounts';
 import ViewAccountDetail from './components/AccountDetail';
 import GetBudgets from './pages/budgets/Budgets';
 import GetAllTransactions from './pages/transactions/Transactions';
+import TransactionForm from './pages/transactions/TransactionForm';
 import AddTransaction from './pages/transactions/AddTransaction';
 import EditTransaction from './pages/transactions/EditTransaction';
 import Profile from './pages/user/User';
@@ -42,9 +43,10 @@ function App() {
 
                         <Route path="budgets" element={<GetBudgets />} />
                         
-                        <Route path="transactions" element={<GetAllTransactions />} />
-                        <Route path="transactions/add_transaction/" element={<AddTransaction />} />
-                        <Route path="transactions/edit_transaction/:accountId/:transactionId" element={<EditTransaction />} />
+                        <Route path="transactions/" element={<GetAllTransactions />} />
+                        <Route path="transactions/add_transaction" element={<TransactionForm />} />
+                        <Route path="transactions/edit_transaction/:accountId/:transactionId" element={<TransactionForm />} />
+                       
                     </Route>
                 </Route>
             </Routes>

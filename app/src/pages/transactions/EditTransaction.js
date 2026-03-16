@@ -1,91 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+
 import { useParams, useNavigate } from 'react-router-dom';
 import { categories } from '../../app_utilities/TransactionCategories';
-import { adjustTransactionAmount } from '../../components/AdjustTransactionAmount';
+
+import api from '../../api/client';
+import { useTransactionsForm } from '../../hooks/useTransactionsForm';
 
 export default function EditTransaction() {
     const navigate = useNavigate();
-    const getToken = () => localStorage.getItem('token');
     const { accountId, transactionId } = useParams();
 
     const [transactionData, setTransactionData] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [formData, setFormData] = useState({
-        transaction_date: '',
-        transaction_description: '',
-        transaction_category: '',
-        transaction_amount: '',
-    });
     
-    useEffect(() => {
-        const fetchTransactionData = async () => {
-            try {
-                const response = await axios.get(`http://127.0.0.1:8000/peppermint/${accountId}/${transactionId}`, {
-                    headers: {
-                        Authorization: `Bearer ${getToken()}`
-                    }
-            });
+    useEffect(() => { fetchTransactionData(); }, [accountId, transactionId]);
 
-            const transactionAmount = response.data.transaction_amount;
-            
-            setTransactionData(response.data);
-            setSelectedCategory(response.data.transaction_category);
-            setFormData({
-                transaction_date: response.data.transaction_date,
-                transaction_description: response.data.transaction_description,
-                transaction_category: response.data.transaction_category,
-                transaction_amount: transactionAmount < 0 ? Math.abs(transactionAmount) : transactionAmount
-            });
-            setLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setLoading(false);
-            }
-        };
-        fetchTransactionData();
-    }, [accountId, transactionId]);
+    const fetchTransactionData = async () => {
+        const response = await api.get(`/${accountId}/${transactionId}`);
+        setTransactionData(response.data);
+        setLoading(false);
+    };
 
     const handleCategorySelect = (e) => {
         const selectedValue = e.target.value;
         setSelectedCategory(selectedValue);
-        setFormData({
+        setTransactionData({
             ...formData,
             transaction_category: selectedValue,
         });
     }
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
+    const handleUpdate = async (data) => {
+        await api.put(`/${accountId}/${transactionId}`, data);
+        alert('Transaction updated successfully');
+        navigate("/transactions");  
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        try {
-            const adjustedFormData = {
-                ...formData,
-                transaction_amount: adjustTransactionAmount(
-                    formData.transaction_category,
-                    formData.transaction_amount
-                ),
-            };
-            await axios.put(`http://127.0.0.1:8000/peppermint/${accountId}/${transactionId}`, adjustedFormData, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            alert('Transaction updated successfully');
-            navigate("/transactions");  
-        } catch (error) {
-            console.error('Error updating transaction: ', error);
-        }
-    };
+    const { formData, handleChange, handleSubmit } = useTransactionsForm(handleUpdate, transactionData);
 
     if (loading) {
         return <div><p>Loading...</p></div>;
@@ -98,6 +51,7 @@ export default function EditTransaction() {
     if (!transactionData) {
         return <div><p>No transaction info available.</p></div>;
     }
+
 
     return (
         <>
