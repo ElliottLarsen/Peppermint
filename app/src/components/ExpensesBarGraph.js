@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { handleError } from '../app_utilities/HandleError';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarController, BarElement, Title, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+
+import api from '../api/client';
 
 ChartJS.register(LinearScale, CategoryScale, BarController, BarElement, Title, Legend);
 
@@ -26,12 +27,7 @@ const ExpensesBarGraph = () => {
     
     const fetchExpensesData = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/peppermint/account/expenses/six_months`, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            
-            });
+            const response = await api.get(`/account/expenses/six_months`);
 
             setExpensesData(response.data || {});
 

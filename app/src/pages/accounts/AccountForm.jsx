@@ -1,94 +1,17 @@
-import { useState, useEffect } from "react";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
-import axios from "axios";
 import { accountCategories } from '../../app_utilities/AccountCategories';
+import { useAccountsForm } from "../../hooks/useAccountsForm";
 
 export default function AccountForm({ httpType, account_id, refreshAccounts, setIsActive }) {
-    const getToken = () => localStorage.getItem('token');
-    const [accountData, setAccountData] = useState(null);
-    const [selectedType, setSelectedType] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [formData, setFormData] = useState({
-        institution: '',
-        account_type: '',
-        current_balance: ''
-    });
-
-    useEffect(() => {
-        if (httpType === 'put') {
-            fetchAccountData(account_id)
-        } else {
-            setLoading(false);
-        }
-    }, [account_id])
-
-    const fetchAccountData = async (account_id) => {
-        try {
-            const response = await axios.get(`http://127.0.0.1:8000/peppermint/account/${account_id}`, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            setAccountData(response.data);
-            setSelectedType(response.data.account_type);
-            setFormData({
-                institution: response.data.institution,
-                account_type: response.data.account_type,
-                current_balance: response.data.current_balance
-            });
-            setLoading(false);
-        } catch (error) {
-            setError(error.message);
-            setLoading(false);
-        }
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
-
-    const handleAddSubmit = async (e) => {
-        e.preventDefault()
-        try {
-            await axios.post("http://127.0.0.1:8000/peppermint/account/", formData, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            setFormData({
-                institution: '',
-                account_type: '',
-                current_balance: ''
-            });
-            alert("Account added successfully!")
-            setIsActive('accountHome');
-            refreshAccounts();
-        } catch (error) {
-            console.error('Error adding account', error);
-        }
-    };
-
-    const handleEditSubmit = async (e) => {
-        e.preventDefault()
-        try {
-            await axios.put(`http://127.0.0.1:8000/peppermint/account/${account_id}`, formData, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            alert('Account updated successfully');
-            setIsActive('accountHome');
-            fetchAccountData(account_id);
-            refreshAccounts();
-        } catch (error) {
-            console.error('Error updated account: ', error);
-        }
-    };
+    const {
+        accountData,
+        loading,
+        handleAddSubmit,
+        handleEditSubmit,
+        handleChange,
+        formData,
+        selectedType,
+    } = useAccountsForm(account_id, httpType, refreshAccounts, setIsActive);
 
     function handleClick() {
         setIsActive('accountHome');
@@ -96,10 +19,6 @@ export default function AccountForm({ httpType, account_id, refreshAccounts, set
 
     if (loading) {
         return <div><p>Loading...</p></div>;
-    }
-
-    if (error) {
-        return <div><p>Error: {error}</p></div>;
     }
 
     if (!accountData && httpType === 'put') {

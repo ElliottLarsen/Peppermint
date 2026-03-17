@@ -16,8 +16,6 @@ import ViewAccountDetail from './components/AccountDetail';
 import GetBudgets from './pages/budgets/Budgets';
 import GetAllTransactions from './pages/transactions/Transactions';
 import TransactionForm from './pages/transactions/TransactionForm';
-import AddTransaction from './pages/transactions/AddTransaction';
-import EditTransaction from './pages/transactions/EditTransaction';
 import Profile from './pages/user/User';
 import User from './pages/user/EditUser';
 

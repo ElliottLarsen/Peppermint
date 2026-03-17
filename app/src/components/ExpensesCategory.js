@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { handleError } from '../app_utilities/HandleError';
 import { Chart as ChartJS, CategoryScale, ArcElement, Colors, Title, Tooltip, plugins } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
+
+import api from '../api/client';
 
 ChartJS.register(CategoryScale, ArcElement, Colors, Title, Tooltip);
 
@@ -25,11 +26,7 @@ const ExpenseCategoryDoughnut = () => {
 
         const fetchExpenseCategoryData = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/peppermint/account/expenses/by_category`, {
-                    headers: {
-                        Authorization: `Bearer ${getToken()}`
-                    }
-                });
+                const response = await api.get(`/account/expenses/by_category`);
                 setExpensesCategoryData(response.data);
             } catch (error) {
                 handleError(error, navigate);
