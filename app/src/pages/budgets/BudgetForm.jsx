@@ -1,95 +1,16 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
-import axios from "axios";
 import { categories } from "../../app_utilities/TransactionCategories";
-import { handleError } from "../../app_utilities/HandleError";
+import { useBudgetsForm } from "../../hooks/useBudgetsForm";
 
 export default function BudgetForm({ httpType, budget_id, refreshBudgets, setIsActive }) {
-    const getToken = () => localStorage.getItem('token');
-    const navigate = useNavigate();
-    const [budgetData, setBudgetData] = useState(null);
-    const [selectedCategory, setSelectedCategory] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [formData, setFormData] = useState({
-        budget_category: '',
-        budget_amount: ''
-    });
-
-    useEffect(() => {
-        if (httpType === 'put') {
-            fetchBudgetData(budget_id);
-        } else {
-            setLoading(false);
-        }
-    }, []);
-
-    const fetchBudgetData = async (budget_id) => {
-        try {
-            const response = await axios.get(`http://127.0.0.1:8000/peppermint/budget/${budget_id}`, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            const data = response.data
-            setBudgetData(data);
-            setSelectedCategory(data.budget_category)
-            setFormData({
-                budget_category: data.budget_category,
-                budget_amount: data.budget_amount
-            });
-            setLoading(false);
-        } catch (error) {
-            handleError(error, navigate);
-            setLoading(false);
-        }
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
-
-    const handleAddSubmit = async (e) => {
-        e.preventDefault()
-        try {
-
-            await axios.post("http://127.0.0.1:8000/peppermint/budget/", formData, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            setFormData({
-                budget_category: '',
-                budget_amount: ''
-            });
-            alert("Budget added successfully!")
-            setIsActive('budgetsHome');
-            refreshBudgets();
-        } catch (error) {
-            console.error('Error adding budget', error);
-        }
-    };
-
-    const handleEditSubmit = async (e) => {
-        e.preventDefault()
-        try {
-            await axios.put(`http://127.0.0.1:8000/peppermint/budget/${budget_id}`, formData, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            alert('Budget updated successfully!');
-            fetchBudgetData(budget_id);
-            refreshBudgets();
-            setIsActive('budgetsHome');
-        } catch (error) {
-            handleError(error, navigate);
-        }
-    };
+    const { 
+        handleAddSubmit, 
+        handleEditSubmit, 
+        handleChange, 
+        formData, 
+        selectedCategory, 
+        loading 
+    } = useBudgetsForm(budget_id, httpType, refreshBudgets, setIsActive);
 
     function handleClick() {
         setIsActive('budgetsHome');
@@ -99,9 +20,9 @@ export default function BudgetForm({ httpType, budget_id, refreshBudgets, setIsA
         return <div><p>Loading...</p></div>;
     }
 
-    if (!budgetData && (httpType === 'put')) {
-        return <div><p>No budget info available.</p></div>
-    }
+    // if (!budgetData && (httpType === 'put')) {
+    //     return <div><p>No budget info available.</p></div>
+    // }
 
     return (
         <>
