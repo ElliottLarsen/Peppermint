@@ -71,6 +71,20 @@ nav a {
     font-weight: 700;
 }
 
+.acct-card {
+    display: flex;
+    gap:15px;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid black;
+    margin: 1% 0;
+    padding: 10px 18px;
+    min-width: 30rem;
+}
+.acct-icon {
+ font-size:x-large;
+}
+
 .curr-balance {
     font-weight: 700;
     display: flex;
