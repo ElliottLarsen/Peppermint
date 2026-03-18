@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+// NOT USED
+
 const FetchAccounts = ({ setAccountOption }) => {
     const navigate = useNavigate();
     const fetchAccounts = async () => {

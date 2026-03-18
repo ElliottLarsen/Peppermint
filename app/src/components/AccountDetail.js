@@ -1,91 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MdOutlineEdit, MdDeleteOutline } from "react-icons/md";
+
+import { useAccounts } from '../hooks/useAccounts';
+import { useTransactions } from '../hooks/useTransactions';
 import FormatCurrency from '../app_utilities/FormatCurrency';
 import FormatDate from '../app_utilities/FormatDate';
 
 const ViewAccountDetail = () => {
     const { accountId } = useParams();
-    const getToken = () => localStorage.getItem('token');
-    const [accountTransactions, setAccountTransactions] = useState(null);
-    const [accountName, setAccountName] = useState("");
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
     const navigate = useNavigate();
 
-    useEffect(() => {
-        fetchAccountTransactions();
-    }, [accountId]);
-
-    useEffect(() => {
-        const fetchAccountName = async () => {
-            try {
-                const response = await axios.get(`http://127.0.0.1:8000/peppermint/account/${accountId}`, {
-                    headers: {
-                        Authorization: `Bearer ${getToken()}`
-                    }
-                });
-                setAccountName(response.data.institution);
-                setLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setLoading(false);
-            }
-        };
-        fetchAccountName();
-    }, [accountId]);
-
-    const fetchAccountTransactions =  async () => {
-        try {
-            const response = await axios.get(`http://127.0.0.1:8000/peppermint/account/${accountId}/transactions`, {
-                headers: {
-                        Authorization: `Bearer ${getToken()}`
-                }
-            });
-            setAccountTransactions(response.data);
-            return response.data || [];
-            
-        } catch (error) {
-            setError(error.message);
-            setLoading(false);
-            if (error.response.status === 401) {
-                navigate('/login');
-            return [];
-            }
-        }
-    };
-
-    const handleDeleteTransaction = async(account_id, id) => {
-        try {
-            await axios.delete(`http://127.0.0.1:8000/peppermint/${account_id}/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            fetchAccountTransactions();
-            alert('Transaction deleted!')
-        } catch (error) {
-            console.error('Error retrieving transactions', error);
-            if (error.response.status === 401) {
-                navigate('/login');
-            }
-        }
-    };
+    const { account, accountTransactions, loading} = useAccounts(accountId);
+    const { deleteTransaction } = useTransactions();
 
     if (loading) {
         return <div><p>Loading...</p></div>;
     }
 
-    if (error) {
-        return <div><p>Error: {error}</p></div>;
-    }
+    // if (error) {
+    //     return <div><p>Error: {error}</p></div>;
+    // }
 
     if (!accountTransactions) {
         return <div><p>No transaction info available.</p></div>;
     }
     
+    const accountName = account.institution;
+
     return (
         <>
         <div class="page-title">
@@ -115,7 +56,7 @@ const ViewAccountDetail = () => {
                     <td><i class="edit-button" title="Edit Account"><MdOutlineEdit 
                         onClick={() => navigate(`/transactions/edit_transaction/${transaction.account_id}/${transaction.id}`)} /></i>
                     <i class="delete-button" title="Delete Account"><MdDeleteOutline 
-                        onClick={() => handleDeleteTransaction(transaction.account_id, transaction.id)} /></i></td>
+                        onClick={() => deleteTransaction(transaction.account_id, transaction.id)} /></i></td>
                 </tr>
             ))}
             </tbody>

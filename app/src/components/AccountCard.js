@@ -16,7 +16,7 @@ export const AccountCard = ({ accountId, accountName, accountType, accountBalanc
     const navigate = useNavigate();
     return (
         <>
-        <div className='acct-card'>
+        <div className='acct-card' key={accountId}>
             <div className='acct-icon'>{accountIcons[accountType]}</div>
             <div>
                 <div className='acct-detail'  onClick={() => navigate(`/accounts/${accountId}`)}>{accountName}</div>
