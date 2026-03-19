@@ -1,81 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useUsersForm } from '../../hooks/useUsersForm';
 
 const User = () => {
-    const navigate = useNavigate();
-    const getToken = () => localStorage.getItem('token');
-
-    const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [formData, setFormData] = useState({
-        username: '',
-        email: '',
-        first_name: '',
-        last_name: '',
-        password1: '', 
-        password2: ''
-    });
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get('http://127.0.0.1:8000/peppermint/user/', {
-                    headers: {
-                        Authorization: `Bearer ${getToken()}`
-                    }
-                });
-                setUserData(response.data);
-                setFormData({
-                    username: response.data.username,
-                    email: response.data.email,
-                    first_name: response.data.first_name,
-                    last_name: response.data.last_name,
-                    password1: '',
-                    password2: ''
-                });
-                setLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setLoading(false);
-            }
-        };
-        fetchUserData();
-    }, []);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await axios.put('http://127.0.0.1:8000/peppermint/user/', formData, {
-                headers: {
-                    Authorization: `Bearer ${getToken()}`
-                }
-            });
-            alert('User account updated succesfully');
-            navigate("/user");
-        } catch (error) {
-            console.error('Error updated user: ', error);
-        }
-    };
+    const {loading, formData, handleChange, handleSubmit} = useUsersForm();
 
     if (loading) {
         return <div><p>Loading...</p></div>;
     }
 
-    if (error) {
-        return <div><p>Error: {error}</p></div>;
-    }
-
-    if (!userData) {
+    if (!formData) {
         return <div><p>No user info available.</p></div>;
     }
 

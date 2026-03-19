@@ -1,30 +1,7 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuthForm } from '../hooks/useAuthForm';
 
 export default function Login() {
-    const [loginData, setLoginData] = useState({ username: "", password: ""});
-    const { login } = useAuth();
-
-    const handleChange = (evt) => {
-        const { name, value } = evt.target;
-        setLoginData(currData => ({ ...currData, [name]: value }));
-    }
-
-    const handleLogin = (evt) => {
-        evt.preventDefault()
-        const params = new URLSearchParams();
-        params.append("username", loginData.username);
-        params.append("password", loginData.password);
-        axios.post("http://127.0.0.1:8000/peppermint/user/login", params)
-            .then((res) => {
-                login(res.data.access_token);
-            })
-            .catch((e) => {
-                console.error("Login error", e.response);
-                window.alert("Login error!");
-            })
-    }
+    const { loginData, handleLoginChange, handleLogin } = useAuthForm();
 
     return (
         <>
@@ -35,10 +12,10 @@ export default function Login() {
                 <form onSubmit={handleLogin}>
                     <fieldset>
                         <label htmlFor="username">username: </label>
-                        <input id="username" type="text" placeholder='username' name='username' value={loginData.username} onChange={handleChange} required />
+                        <input id="username" type="text" placeholder='username' name='username' value={loginData.username} onChange={handleLoginChange} required />
                         
                         <label htmlFor="password">password: </label>
-                        <input id='password' type='password' placeholder='password' name='password' value={loginData.password} onChange={handleChange} required />
+                        <input id='password' type='password' placeholder='password' name='password' value={loginData.password} onChange={handleLoginChange} required />
                         
                         <button type='submit'>login</button>
                     </fieldset>

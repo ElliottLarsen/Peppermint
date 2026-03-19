@@ -1,22 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { handleError } from '../app_utilities/HandleError';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarController, BarElement, Title, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
-import api from '../api/client';
+import { useAccounts } from '../hooks/useAccounts';
 
 ChartJS.register(LinearScale, CategoryScale, BarController, BarElement, Title, Legend);
 
 const ExpensesBarGraph = () => {
-    const getToken = () => localStorage.getItem('token');
-    const navigate = useNavigate();
-    const [expensesData, setExpensesData]= useState({});
     const [expensesChart, setExpensesChart] = useState(null);
-
-    useEffect(() => {
-        fetchExpensesData();
-    }, []);
+    const { expensesData } = useAccounts();
 
     useEffect(() => {
         if (Object.keys(expensesData).length > 0) {
@@ -24,17 +16,6 @@ const ExpensesBarGraph = () => {
         }
     }, [expensesData]);
 
-    
-    const fetchExpensesData = async () => {
-        try {
-            const response = await api.get(`/account/expenses/six_months`);
-
-            setExpensesData(response.data || {});
-
-        } catch (error) {
-            handleError(error, navigate);
-        }
-    };
     const createBarGraph = () => {
 
         const expenseLabels = Object.keys(expensesData);

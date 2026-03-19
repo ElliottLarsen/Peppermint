@@ -1,45 +1,21 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
 import ViewAccounts from '../../components/ViewAccounts';
 import ExpensesBarGraph from '../../components/ExpensesBarGraph';
 import ExpenseCategoryDoughnut from '../../components/ExpensesCategory';
 
-const LandingPage = () => {
-    const getToken = () => localStorage.getItem('token');
-    const [username, setUsername] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+import { useUsers } from '../../hooks/useUsers';
 
-    useEffect(() => {
-        const fetchUserName = async () => {
-            try {
-                const response = await axios.get('http://127.0.0.1:8000/peppermint/user/', {
-                    headers: {
-                        Authorization: `Bearer ${getToken()}`
-                    }
-                });
-                setUsername(response.data.username);
-                setLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setLoading(false);
-            }
-        };
-        fetchUserName();
-    }, []);
+const LandingPage = () => {
+    const { userData, loading } = useUsers();
 
     if (loading) {
         return <div><p>Loading...</p></div>;
     }
 
-    if (error) {
-        return <div><p>Error: {error}</p></div>;
-    }
+    const username = userData.username;
 
     if (!username) {
         return <div><p>No user info available.</p></div>;
     }
-
 
     return (
         <>

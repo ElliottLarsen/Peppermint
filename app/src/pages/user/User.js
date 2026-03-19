@@ -1,40 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
 import { MdOutlineEdit } from "react-icons/md";
 
+import { useUsers } from '../../hooks/useUsers';
+
 const Profile = () => {
-    const getToken = () => localStorage.getItem('token');
     const navigate = useNavigate();
-
-    const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get('http://127.0.0.1:8000/peppermint/user/', {
-                    headers: {
-                        Authorization: `Bearer ${getToken()}`
-                    }
-                });
-                setUserData(response.data);
-                setLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setLoading(false);
-            }
-        };
-        fetchUserData();
-    }, []);
+    const { userData, loading } = useUsers();
 
     if (loading) {
         return <div><p>Loading...</p></div>;
-    }
-
-    if (error) {
-        return <div><p>Error: {error}</p></div>;
     }
 
     if (!userData) {

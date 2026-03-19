@@ -15,4 +15,17 @@ api.interceptors.request.use((config) => {
     return Promise.reject(error);
 });
 
+export const responseInterceptor = (logout) => {
+    api.interceptors.response.use(
+        (response) => (response),
+        (error) => {
+            if (error.response && error.response.status === 401) {
+                alert("Expired token");
+                logout();
+            }
+            return Promise.reject(error);
+        }
+    );
+}
+
 export default api;

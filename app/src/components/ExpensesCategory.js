@@ -1,37 +1,20 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { handleError } from '../app_utilities/HandleError';
-import { Chart as ChartJS, CategoryScale, ArcElement, Colors, Title, Tooltip, plugins } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, ArcElement, Colors, Title, Tooltip, } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 
-import api from '../api/client';
+import { useAccounts } from '../hooks/useAccounts';
 
 ChartJS.register(CategoryScale, ArcElement, Colors, Title, Tooltip);
 
 const ExpenseCategoryDoughnut = () => {
-        const getToken = () => localStorage.getItem('token');
-        const navigate = useNavigate();
-        const [expenseCategoryData, setExpensesCategoryData]= useState({});
         const [expensesDoughnut, setExpensesDoughnut] = useState(null);
-
-        useEffect(() => {
-            fetchExpenseCategoryData();
-        }, []);
-        
+        const { expenseCategoryData } = useAccounts();
+  
         useEffect(() => {
             if (Object.keys(expenseCategoryData).length > 0) {
                 createDoughnutGraph();
             }
         }, [expenseCategoryData]);
-
-        const fetchExpenseCategoryData = async () => {
-            try {
-                const response = await api.get(`/account/expenses/by_category`);
-                setExpensesCategoryData(response.data);
-            } catch (error) {
-                handleError(error, navigate);
-            }
-        };
 
         const createDoughnutGraph = () => {
 

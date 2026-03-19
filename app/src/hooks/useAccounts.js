@@ -7,6 +7,9 @@ export const useAccounts = (accountId = null) => {
     const [ account, setAccount ] = useState([]);
     const [ accounts, setAccounts ] = useState([]);
     const [ accountTransactions, setAccountTransactions ] = useState([]);
+    // six month expense
+    const [ expensesData, setExpensesData ] = useState({});
+    const [ expenseCategoryData, setExpenseCategoryData ] = useState({});
     const [ loading, setLoading ] = useState(true);
     const navigate = useNavigate();
 
@@ -44,6 +47,24 @@ export const useAccounts = (accountId = null) => {
         }
     };
 
+    const fetchExpensesData = async () => {
+        try {
+            const response = await api.get(`/account/expenses/six_months`);
+            setExpensesData(response.data || {});
+        } catch (error) {
+            handleError(error, navigate);
+        }
+    };
+
+    const fetchExpenseCategoryData= async () => {
+        try {
+            const response = await api.get(`/account/expenses/by_category`);
+            setExpenseCategoryData(response.data);
+        } catch (error) {
+            handleError(error, navigate);
+        }
+    };
+
     const accountOptions = useMemo(() => {
         const options = accounts.map(acct => ({
         key: acct.institution,
@@ -55,6 +76,8 @@ export const useAccounts = (accountId = null) => {
     useEffect(() => { fetchAccount(accountId); }, [accountId]);
     useEffect(() => { fetchAccounts(); }, []);
     useEffect(() => { fetchAccountTransactions(accountId); }, [accountId]);
+    useEffect(() => { fetchExpensesData(); }, []);
+    useEffect(() => { fetchExpenseCategoryData(); }, []);
 
     const deleteAccount = async (id) => {
         try {
@@ -70,8 +93,11 @@ export const useAccounts = (accountId = null) => {
         account,
         accountTransactions,
         accounts,
+        expensesData,
+        expenseCategoryData,
         accountOptions, 
         fetchAccounts, 
         deleteAccount, 
-        loading };
+        loading 
+    };
 };

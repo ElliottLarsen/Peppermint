@@ -1,39 +1,7 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Login from './Login';
+import { useAuthForm } from '../hooks/useAuthForm';
 
 export default function Register() {
-    const [registerData, setRegisterData] = useState({ 
-        username: "", password1: "", password2: "", first_name: "", last_name: "", email: ""
-    })
-
-    const navigateTo = useNavigate();
-
-    const handleSubmit = (evt) => {
-        evt.preventDefault();
-        axios.post("http://127.0.0.1:8000/peppermint/user/register", registerData)
-            .then((res) => {
-                navigateTo("/login")
-            })
-            .catch((e) => {
-                console.error("Error registering: ", e);
-                window.alert("This user already exists");
-            })
-    }
-
-    const handleChange = (evt) => {
-        const changeField = evt.target.name;
-        const newValue = evt.target.value;
-        setRegisterData(currData => {
-            currData[changeField] = newValue;
-            return { ...currData };
-        })
-    }
-
-    if (registerData) {
-        <Login />
-    }
+    const { handleChange, handleRegister } = useAuthForm();
 
     return (
         <>
@@ -41,7 +9,7 @@ export default function Register() {
             <h2>Register</h2>
         </div>
         <div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleRegister}>
                 <fieldset>
                     <label htmlFor="username" className="required">Username: </label>
                     <input type="text" name="username" placeholder="username" id="username" onChange={handleChange} required autofocus />
