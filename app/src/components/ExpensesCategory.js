@@ -8,7 +8,7 @@ ChartJS.register(CategoryScale, ArcElement, Colors, Title, Tooltip);
 
 const ExpenseCategoryDoughnut = () => {
         const [expensesDoughnut, setExpensesDoughnut] = useState(null);
-        const { expenseCategoryData } = useAccounts();
+        const { expenseCategoryData } = useAccounts(null, {fetchAnalytics:true});
   
         useEffect(() => {
             if (Object.keys(expenseCategoryData).length > 0) {

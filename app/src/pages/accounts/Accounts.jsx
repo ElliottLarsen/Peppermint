@@ -11,7 +11,7 @@ export default function GetAccounts() {
     const [accountId, setAccountId] = useState();
     const [isActive, setIsActive] = useState('accountHome')
 
-    const { accounts, fetchAccounts, deleteAccount, loading } = useAccounts();
+    const { accounts, fetchAccounts, deleteAccount, loading } = useAccounts(null, {fetchAll:true});
  
     if (!accounts) {
         return <div><p>No account info available.</p></div>;

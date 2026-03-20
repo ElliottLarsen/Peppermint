@@ -6,7 +6,7 @@ import AccountCard from './AccountCard';
 import FormatCurrency from '../app_utilities/FormatCurrency';
 
 const ViewAccounts = () => {
-    const { accounts } = useAccounts();
+    const { accounts } = useAccounts(null, {fetchAll:true});
     const navigate = useNavigate();
 
     if (!accounts || accounts.length === 0) {

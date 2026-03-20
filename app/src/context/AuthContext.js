@@ -1,17 +1,36 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 import api from "../api/client";
 const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
     const navigate = useNavigate();
-    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+
+    const [isLoggedIn, setIsLoggedIn] = useState(() => {
+        const token = localStorage.getItem('token');
+        if (!token) return false;
+
+        try {
+            const decodedToken = jwtDecode(token);
+            return decodedToken.exp > Date.now() / 1000;
+        } catch {
+            return false;
+        }
+    });
 
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            setIsLoggedIn(true);
+            try {
+                const { exp } = jwtDecode(token);
+                if (exp < Date.now() / 1000) {
+                    logout();
+                }
+            } catch (error) {
+                logout();
+            }
         }
     }, []);
 
@@ -32,11 +51,8 @@ export const AuthProvider = ({children}) => {
             (response) => (response),
             (error) => {
                 const err = error.response;
-                const url = error.config.url;
-                console.log(url);
                 const isUnauthorized = err && err.status === 401;
-                const isProtected = url.includes("/user/");
-                if (isUnauthorized && !isProtected) {
+                if (isUnauthorized) {
                     alert("Expired token");
                     logout();
                 }

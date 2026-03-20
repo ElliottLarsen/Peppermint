@@ -8,7 +8,7 @@ ChartJS.register(LinearScale, CategoryScale, BarController, BarElement, Title, L
 
 const ExpensesBarGraph = () => {
     const [expensesChart, setExpensesChart] = useState(null);
-    const { expensesData } = useAccounts();
+    const { expensesData } = useAccounts(null, {fetchAnalytics:true});
 
     useEffect(() => {
         if (Object.keys(expensesData).length > 0) {

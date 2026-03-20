@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { handleError } from "../app_utilities/HandleError";
 import api from "../api/client";
 
-export const useAccounts = (accountId = null) => {
+export const useAccounts = (accountId = null, options = {
+    fetchAll: false,
+    fetchDetails: false,
+    fetchAnalytics: false
+}) => {
     const [ account, setAccount ] = useState([]);
     const [ accounts, setAccounts ] = useState([]);
     const [ accountTransactions, setAccountTransactions ] = useState([]);
@@ -14,6 +18,9 @@ export const useAccounts = (accountId = null) => {
     const navigate = useNavigate();
 
     const fetchAccount = async (accountId) => {
+        if (!accountId) {
+            return;
+        }
         try {
             const response = await api.get(`/account/${accountId}`);
             setAccount(response.data);
@@ -37,6 +44,9 @@ export const useAccounts = (accountId = null) => {
     };
 
     const fetchAccountTransactions = async (accountId) => {
+        if (!accountId) {
+            return;
+        }
         try {
             const response = await api.get(`/account/${accountId}/transactions`);
             setAccountTransactions(response.data);
@@ -73,11 +83,14 @@ export const useAccounts = (accountId = null) => {
         return [ {key: "", value: ""},...options];
     }, [accounts]);
 
-    useEffect(() => { fetchAccount(accountId); }, [accountId]);
-    useEffect(() => { fetchAccounts(); }, []);
-    useEffect(() => { fetchAccountTransactions(accountId); }, [accountId]);
-    useEffect(() => { fetchExpensesData(); }, []);
-    useEffect(() => { fetchExpenseCategoryData(); }, []);
+    useEffect(() => { if (options.fetchDetails && accountId) fetchAccount(accountId); }, [accountId, options.fetchDetails]);
+    useEffect(() => { if (options.fetchAll) fetchAccounts(); }, [options.fetchAll]);
+    useEffect(() => { if (options.fetchDetails && accountId) fetchAccountTransactions(accountId); }, [accountId]);
+    useEffect(() => { if (options.fetchAnalytics) {
+        fetchExpensesData(); 
+        fetchExpenseCategoryData();
+        }
+    }, [options.fetchAnalytics]);
 
     const deleteAccount = async (id) => {
         try {

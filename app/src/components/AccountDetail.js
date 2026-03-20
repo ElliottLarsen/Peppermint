@@ -10,16 +10,12 @@ const ViewAccountDetail = () => {
     const { accountId } = useParams();
     const navigate = useNavigate();
 
-    const { account, accountTransactions, loading} = useAccounts(accountId);
+    const { account, accountTransactions, loading} = useAccounts(accountId, {fetchDetails: true});
     const { deleteTransaction } = useTransactions();
 
     if (loading) {
         return <div><p>Loading...</p></div>;
     }
-
-    // if (error) {
-    //     return <div><p>Error: {error}</p></div>;
-    // }
 
     if (!accountTransactions) {
         return <div><p>No transaction info available.</p></div>;
